@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MeTop Furniture Lab | Interactive 3D Furniture Showroom</title>
+    <meta
+      name="description"
+      content="An interactive 3D furniture showroom for brands, ecommerce teams, and showrooms that want buyers to inspect products from every angle."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%23fffdf8'/%3E%3Cpath d='M18 43V20h7l7 11 7-11h7v23h-7V31L34 43h-4l-5-12v12h-7Z' fill='%239b622f'/%3E%3C/svg%3E"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "playcanvas": "./vendor/playcanvas/playcanvas.mjs"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="./src/styles/showroom.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="topbar" aria-label="Site header">
+        <a class="brand-lockup" href="#showroom" aria-label="MeTop Furniture Lab">
+          <span class="brand-mark" aria-hidden="true">M</span>
+          <span class="brand-text">
+            <span class="brand-name">MeTop Furniture Lab</span>
+            <span class="brand-tagline" id="brandTagline">Interactive 3D Furniture Showroom</span>
+          </span>
+        </a>
+
+        <nav class="topbar-nav" aria-label="Primary navigation">
+          <a href="#showroom" id="navShowroom">3D Showroom</a>
+          <a href="#pain" id="navPain">Pain Points</a>
+          <a href="#scenarios" id="navScenarios">Use Cases</a>
+          <a href="#contact" id="navContact">Book a Demo</a>
+        </nav>
+
+        <div class="topbar-actions" aria-label="Quick actions">
+          <button class="icon-action has-tooltip" type="button" data-scroll-target="cases" aria-label="Search cases" data-tooltip="View furniture cases">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="M16.5 16.5 21 21"></path>
+            </svg>
+            <span id="searchLabel">Cases</span>
+          </button>
+          <button class="icon-action has-tooltip" type="button" id="saveButton" aria-label="Save selected furniture" data-tooltip="Save this furniture">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 4h12v17l-6-4-6 4V4Z"></path>
+            </svg>
+            <span id="savedLabel">Saved</span>
+          </button>
+          <div class="language-toggle" role="group" aria-label="Language">
+            <button class="language-option" type="button" data-lang="zh" aria-pressed="false">中</button>
+            <button class="language-option active" type="button" data-lang="en" aria-pressed="true">EN</button>
+          </div>
+          <button class="round-cta" type="button" data-scroll-target="contact">
+            <span id="topCtaLabel">Book a Demo</span>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="showroom-grid" id="showroom" aria-labelledby="showroomTitle">
+          <aside class="category-rail" aria-label="Browse featured furniture">
+            <div class="panel-heading">
+              <span class="eyebrow" id="browseLabel">精选家具</span>
+              <button class="text-link" type="button" data-scroll-target="cases" id="viewAllLabel">查看全部</button>
+            </div>
+            <div class="category-list" id="categoryList"></div>
+
+            <div class="condition-card">
+              <div class="mini-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 3 5 6v5c0 4.4 2.8 8.5 7 10 4.2-1.5 7-5.6 7-10V6l-7-3Z"></path>
+                  <path d="m8.8 12.2 2.1 2.1 4.5-5"></path>
+                </svg>
+              </div>
+              <div>
+                <span class="eyebrow" id="statusLabel">展厅状态</span>
+                <strong id="conditionTitle">Ready to view</strong>
+                <p id="conditionCopy">Ready for interactive web presentation.</p>
+              </div>
+            </div>
+          </aside>
+
+          <section class="viewer-panel" id="viewerPanel" aria-labelledby="showroomTitle">
+            <div class="viewer-copy">
+              <span class="era-label" id="eraLabel">1960s</span>
+              <h1 id="showroomTitle">Lounge Armchair</h1>
+              <p id="styleLine">Scandinavian Modern</p>
+              <p id="showroomDescription">
+                A furniture piece presented as an interactive 3D showroom for web viewing.
+              </p>
+              <button class="story-link" type="button" id="storyButton">
+                <span id="storyButtonLabel">查看展示说明</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h14"></path>
+                  <path d="m13 6 6 6-6 6"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="view-mode-card" aria-label="View mode controls">
+              <span class="eyebrow" id="viewModeLabel">查看方式</span>
+              <div class="mode-buttons" role="group" aria-label="Choose view mode">
+                <button class="mode-button active has-tooltip" type="button" data-view-mode="3d" aria-pressed="true" data-tooltip="查看 3D 展示">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"></path>
+                    <path d="M12 12 4 7.5"></path>
+                    <path d="m12 12 8-4.5"></path>
+                    <path d="M12 12v9"></path>
+                  </svg>
+                </button>
+                <button class="mode-button has-tooltip" type="button" data-view-mode="product" aria-pressed="false" data-tooltip="查看商品图">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 19h14"></path>
+                    <path d="M7 19V8a5 5 0 0 1 10 0v11"></path>
+                    <path d="M7 12h10"></path>
+                  </svg>
+                </button>
+                <button class="mode-button has-tooltip" type="button" data-view-mode="grid" aria-pressed="false" data-tooltip="显示空间标尺">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 4h7v7H4z"></path>
+                    <path d="M13 4h7v7h-7z"></path>
+                    <path d="M4 13h7v7H4z"></path>
+                    <path d="M13 13h7v7h-7z"></path>
+                  </svg>
+                </button>
+              </div>
+              <label class="environment-toggle">
+                <span id="environmentLabel">空间预览</span>
+                <input id="environmentToggle" type="checkbox" />
+                <span class="toggle-track" aria-hidden="true"></span>
+              </label>
+            </div>
+
+            <div class="model-stage" id="modelStage" aria-label="Interactive furniture preview">
+              <div class="scan-halo" aria-hidden="true"></div>
+              <div class="scan-grid" aria-hidden="true"></div>
+              <div class="model-viewer" id="modelViewer" aria-hidden="true">
+                <span class="model-status" id="modelStatus" role="status" aria-live="polite">正在加载 3D 展示</span>
+              </div>
+              <figure class="model-object" id="modelObject">
+                <img id="modelImage" src="./public/images/lounge-armchair.png" alt="Lounge Armchair" />
+              </figure>
+              <div class="dimension-overlay" id="dimensionOverlay" aria-label="Furniture dimensions"></div>
+              <div class="annotation-layer" id="annotationLayer" aria-label="Furniture detail annotations"></div>
+              <div class="measurement-layer" id="measurementLayer" aria-label="Furniture measurement tools"></div>
+              <div class="view-preset-bar" id="viewPresetBar" aria-label="Camera view presets"></div>
+            </div>
+
+            <div class="viewer-toolbar" aria-label="Model viewer controls">
+              <button class="has-tooltip" type="button" data-control="rotate" aria-label="Toggle model rotation" title="自转" data-tooltip="开启或暂停自转">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 12a8 8 0 0 1 13.6-5.7"></path>
+                  <path d="M18 3v5h-5"></path>
+                  <path d="M20 12a8 8 0 0 1-13.6 5.7"></path>
+                  <path d="M6 21v-5h5"></path>
+                </svg>
+                <span class="control-label">Rotate</span>
+              </button>
+              <button class="has-tooltip" type="button" data-control="zoom" aria-label="Zoom model" title="放大" data-tooltip="放大或还原视角">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="M11 8v6"></path>
+                  <path d="M8 11h6"></path>
+                  <path d="m16.5 16.5 4 4"></path>
+                </svg>
+                <span class="control-label">Zoom</span>
+              </button>
+              <button class="has-tooltip" type="button" data-control="reset" aria-label="Reset model view" title="重置" data-tooltip="重置观看角度">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 4v6h6"></path>
+                  <path d="M20 20v-6h-6"></path>
+                  <path d="M20 11A8 8 0 0 0 6.3 5.3L4 10"></path>
+                  <path d="M4 13a8 8 0 0 0 13.7 5.7L20 14"></path>
+                </svg>
+                <span class="control-label">Reset</span>
+              </button>
+              <button class="has-tooltip" type="button" data-control="fullscreen" aria-label="View fullscreen" title="全屏" data-tooltip="全屏查看家具">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
+                  <path d="M16 3h3a2 2 0 0 1 2 2v3"></path>
+                  <path d="M8 21H5a2 2 0 0 1-2-2v-3"></path>
+                  <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+                </svg>
+                <span class="control-label">Fullscreen</span>
+              </button>
+              <button class="has-tooltip" type="button" data-control="clean" aria-label="Clean model view" title="清屏" data-tooltip="只看模型">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 7h16"></path>
+                  <path d="M7 12h10"></path>
+                  <path d="M10 17h4"></path>
+                </svg>
+                <span class="control-label">Clean View</span>
+              </button>
+              <button class="has-tooltip" type="button" data-control="measure" aria-label="Measure furniture" title="测量" data-tooltip="打开测量点">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 17 17 4l3 3L7 20l-3-3Z"></path>
+                  <path d="m14 7 3 3"></path>
+                  <path d="m11 10 2 2"></path>
+                  <path d="m8 13 3 3"></path>
+                </svg>
+                <span class="control-label">Measure</span>
+              </button>
+              <button class="has-tooltip" type="button" data-control="share" aria-label="Copy furniture link" title="分享" data-tooltip="复制当前家具链接">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <path d="m8.6 10.6 6.8-4.2"></path>
+                  <path d="m8.6 13.4 6.8 4.2"></path>
+                </svg>
+                <span class="control-label">Share</span>
+              </button>
+            </div>
+
+            <button class="room-preview has-tooltip" type="button" id="roomPreviewButton" aria-label="Toggle room preview" title="空间预览" data-tooltip="切换空间预览">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"></path>
+                <path d="M4 7.5 12 12l8-4.5"></path>
+              </svg>
+              <span class="control-label">View in Room</span>
+            </button>
+
+            <button class="sample-cta has-tooltip" type="button" id="sampleRequestButton" aria-label="Request a sample showroom" title="预约样板" data-tooltip="用当前家具预约一个 3D 样板">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 19V5h14v14H5Z"></path>
+                <path d="M8 9h8"></path>
+                <path d="M8 13h5"></path>
+                <path d="m15 16 2 2 4-4"></path>
+              </svg>
+              <span id="sampleCtaLabel">Request Sample</span>
+            </button>
+
+            <button class="immersive-close has-tooltip" type="button" id="immersiveCloseButton" aria-label="Exit immersive view" title="退出沉浸查看" data-tooltip="退出沉浸查看">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+            </button>
+
+            <div class="action-toast" id="actionToast" role="status" aria-live="polite"></div>
+          </section>
+
+          <aside class="insight-panel" aria-label="3D furniture showroom benefits">
+            <div class="insight-card">
+              <div class="mini-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z"></path>
+                  <path d="M12 12 4 7.5"></path>
+                  <path d="m12 12 8-4.5"></path>
+                  <path d="M12 12v9"></path>
+                </svg>
+              </div>
+              <span class="eyebrow" id="insightHeroEyebrow">3D 家具展示</span>
+              <h2 id="insightHeroTitle">让客户在线上看清家具，而不是猜家具。</h2>
+              <p id="insightHeroText">用 360° 交互展示家具的材质、体量、细节和比例，帮助客户更快做决定。</p>
+            </div>
+            <div class="insight-list" id="insightList"></div>
+          </aside>
+        </section>
+
+        <section class="pain-section" id="pain" aria-labelledby="painTitle">
+          <div class="section-intro pain-intro">
+            <span class="eyebrow" id="painEyebrow">家具行业痛点</span>
+            <h2 id="painTitle"><span>家具不是不好卖，</span><span>是客户在线上看不清。</span></h2>
+            <p id="painCopy">
+              高客单价家具最怕“看起来不错，收到不对”。实景 3D 展示把客户最担心的比例、材质和细节提前讲清楚。
+            </p>
+          </div>
+          <div class="pain-grid" id="painGrid"></div>
+        </section>
+
+        <section class="spec-strip" aria-label="Selected furniture details">
+          <article class="spec-card">
+            <div class="spec-card-head">
+              <span class="eyebrow" id="dimensionsLabel">尺寸</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 20 20 4"></path>
+                <path d="M14 4h6v6"></path>
+                <path d="M4 14v6h6"></path>
+              </svg>
+            </div>
+            <dl class="dimension-list" id="dimensionList"></dl>
+          </article>
+
+          <article class="spec-card">
+            <div class="spec-card-head">
+              <span class="eyebrow" id="materialsLabel">材质</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 4 8l8 5 8-5-8-5Z"></path>
+                <path d="m4 13 8 5 8-5"></path>
+              </svg>
+            </div>
+            <div class="material-list" id="materialList"></div>
+          </article>
+
+          <article class="spec-card">
+            <div class="spec-card-head">
+              <span class="eyebrow" id="conditionLabel">状态</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 5 6v5c0 4.4 2.8 8.5 7 10 4.2-1.5 7-5.6 7-10V6l-7-3Z"></path>
+                <path d="m8.8 12.2 2.1 2.1 4.5-5"></path>
+              </svg>
+            </div>
+            <h3 id="conditionGrade">Excellent</h3>
+            <p id="conditionDetail">Professionally restored and structurally sound.</p>
+          </article>
+
+          <article class="spec-card capture-card">
+            <div class="spec-card-head">
+              <span class="eyebrow" id="captureLabel">展示说明</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"></path>
+              </svg>
+            </div>
+            <p id="captureNote">Optimized for web viewing with soft studio lighting.</p>
+            <div class="capture-thumbs" id="captureThumbs"></div>
+          </article>
+        </section>
+
+        <section class="workflow-section" id="workflow" aria-labelledby="workflowTitle">
+          <div class="section-intro">
+            <span class="eyebrow" id="workflowEyebrow">如何赋能家具企业</span>
+            <h2 id="workflowTitle">从一件家具，到一个可嵌入官网和电商页的 3D 展厅。</h2>
+            <p id="workflowCopy">
+              我们把家具产品做成可交互的网页展示，让销售、运营和品牌团队都能直接使用。
+            </p>
+          </div>
+          <div class="workflow-grid" id="workflowGrid"></div>
+        </section>
+
+        <section class="scenarios-section" id="scenarios" aria-labelledby="scenariosTitle">
+          <div class="section-intro">
+            <span class="eyebrow" id="scenariosEyebrow">使用场景</span>
+            <h2 id="scenariosTitle">把 3D 家具展示放到真正影响成交的位置。</h2>
+            <p id="scenariosCopy">
+              不只是一个展示链接，而是可以进入商品页、销售跟进和品牌内容里的成交工具。
+            </p>
+          </div>
+          <div class="scenario-list" id="scenarioList"></div>
+        </section>
+
+        <section class="cases-section" id="cases" aria-labelledby="casesTitle">
+          <div class="section-intro">
+            <span class="eyebrow" id="casesEyebrow">家具案例</span>
+            <h2 id="casesTitle">可交互家具展品</h2>
+            <p id="casesCopy">通过椅子、沙发、边几、柜类和灯具，展示客户在线上查看家具时最关心的比例、材质和细节。</p>
+          </div>
+          <div class="filter-row" id="filterRow" aria-label="Filter furniture cases"></div>
+          <div class="case-grid" id="caseGrid"></div>
+        </section>
+
+        <section class="contact-section" id="contact" aria-labelledby="contactTitle">
+          <div class="contact-copy">
+            <span class="eyebrow" id="contactEyebrow">预约实景 3D 家具演示</span>
+            <h2 id="contactTitle">先拿一件家具试试看。</h2>
+            <p id="contactCopy">
+              你可以提供一件家具产品的图片、视频、3D 文件或采集需求，我们帮你判断适合的展示方式，并准备一版可给客户查看的 3D 展示页面。
+            </p>
+          </div>
+
+          <form class="contact-form" id="contactForm">
+            <label>
+              <span id="needLabel">你的需求</span>
+              <select id="contactNeed" name="need">
+                <option data-option-key="showcase">我想展示家具产品</option>
+                <option data-option-key="scan">我想采集/生成家具 3D</option>
+                <option data-option-key="quote">我想了解报价</option>
+                <option data-option-key="cases">我想看更多案例</option>
+              </select>
+            </label>
+            <label>
+              <span id="contactMethodLabel">联系方式</span>
+              <input name="contact" type="text" placeholder="邮箱 / 手机 / 微信" />
+            </label>
+            <label>
+              <span id="messageLabel">备注</span>
+              <textarea id="contactMessage" name="message" rows="4">我想了解 Lounge Armchair 这种实景 3D 家具展示。</textarea>
+            </label>
+            <button class="submit-button" type="submit" id="submitLabel">预约 3D 家具展示演示</button>
+            <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

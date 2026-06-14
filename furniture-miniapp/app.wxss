@@ -1,0 +1,10 @@
+page {
+  min-height: 100%;
+  background: #fbf8ef;
+  color: #2b261f;
+  font-family: "Songti SC", "STSong", serif;
+}
+
+button {
+  font-family: inherit;
+}
