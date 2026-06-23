@@ -7,7 +7,8 @@ const DEFAULT_FURNITURE_ID = "atelier-low-sofa";
 const searchParams = new URLSearchParams(window.location.search);
 const isMiniAppPath = /\/miniapp(?:\/|$)/.test(window.location.pathname);
 const requestedMiniappMode = searchParams.get("miniapp") || (isMiniAppPath ? "home" : "");
-const requestedCategoryId = searchParams.get("category") || (requestedMiniappMode ? "toys" : "home");
+const hasRequestedCategory = searchParams.has("category");
+const requestedCategoryId = hasRequestedCategory ? searchParams.get("category") : requestedMiniappMode ? "toys" : "home";
 let activeCaseCategory = getCaseCategory(requestedCategoryId);
 const getCategoryItems = (category) => (category.id === "home" ? showroomFurniture : category.products || []);
 let rawShowroomItems = getCategoryItems(activeCaseCategory);
@@ -111,6 +112,7 @@ const miniappMode = requestedMiniappMode;
 const isMiniAppHome = miniappMode === "home";
 const isMiniAppGallery = miniappMode === "gallery";
 const isMiniAppMode = isMiniAppHome || isMiniAppGallery;
+const isMiniAppGuidePage = isMiniAppPath && isMiniAppHome && !hasRequestedCategory;
 const requestedLanguage = searchParams.get("lang");
 const savedLanguage = window.localStorage.getItem("showroom-lang");
 const requestedFurnitureId = searchParams.get("item");
@@ -1289,6 +1291,31 @@ function getMiniAppUrl(mode, itemId = state.activeId) {
   return url.href;
 }
 
+function getMiniAppGuideUrl() {
+  const url = new URL(window.location.href);
+  url.pathname = "/miniapp";
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("lang", state.lang);
+  return url.href;
+}
+
+function getMiniAppCategoryUrl(categoryId, itemId = "") {
+  const category = getCaseCategory(categoryId);
+  const items = getCategoryItems(category);
+  const defaultItemId = itemId || category.defaultItemId || items?.[0]?.id || "";
+  const url = new URL(window.location.href);
+  url.pathname = "/miniapp";
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("category", category.id);
+  if (defaultItemId) {
+    url.searchParams.set("item", defaultItemId);
+  }
+  url.searchParams.set("lang", state.lang);
+  return url.href;
+}
+
 function scrollMiniAppCategorySwitch(target, behavior = "auto") {
   const rail = document.querySelector(".miniapp-category-switch");
   const activeTarget = target || rail?.querySelector("[data-case-category].active");
@@ -1395,6 +1422,10 @@ function getMiniAppIndustryCopy(category = activeCaseCategory) {
     metric: category.countLabel || "案例样板",
     conversion: "适合官网、小程序、销售资料和客户转发。"
   };
+}
+
+function getMiniAppGuideItems(category) {
+  return orderFurnitureItems(getCategoryItems(category), category.defaultItemId);
 }
 
 function updateMiniAppCategoryProfile(item = getActiveItem()) {
@@ -1507,6 +1538,71 @@ function getFullShowroomUrl(target = "") {
   return url.href;
 }
 
+function initMiniAppGuidePage() {
+  document.documentElement.lang = state.lang === "en" ? "en" : "zh-CN";
+  document.body.className = "miniapp-mode miniapp-guide-mode";
+  document.body.dataset.caseCategory = "guide";
+  document.documentElement.style.setProperty("--accent", "#1d48ce");
+  document.documentElement.style.setProperty("--accent-strong", "#12308f");
+  document.documentElement.style.setProperty("--accent-soft", "#dfe8ff");
+  document.title = "MeTop Cases | 3D 行业案例入口";
+  document.querySelector("meta[name='description']")?.setAttribute(
+    "content",
+    "选择一个行业品类，进入对应的 3D/2D 案例展示页面。"
+  );
+
+  const categoryCards = caseCategories
+    .map((category, index) => {
+      const copy = getMiniAppIndustryCopy(category);
+      const items = getMiniAppGuideItems(category);
+      const leadItem = getLocalizedItem(items[0] || {});
+      return `
+        <a
+          class="miniapp-guide-card"
+          href="${escapeHtml(getMiniAppCategoryUrl(category.id, items[0]?.id || ""))}"
+          style="--category-accent: ${escapeHtml(category.accent)}; --category-soft: ${escapeHtml(category.accentSoft || category.surface || category.bg)};"
+        >
+          <span class="miniapp-guide-index">${String(index + 1).padStart(2, "0")}</span>
+          <span class="miniapp-guide-card-copy">
+            <small>${escapeHtml(copy.audience || category.origin || "行业案例")}</small>
+            <strong>${escapeHtml(copy.name || category.shortName || category.name)}</strong>
+            <em>${escapeHtml(copy.subtitle || category.page?.zh?.casesCopy || "查看可复用的 3D/2D 案例样板。")}</em>
+            <b>进入${escapeHtml(copy.name || category.shortName || category.name)}页面</b>
+          </span>
+          <span class="miniapp-guide-thumb">
+            <img src="${escapeHtml(leadItem.image || MINIAPP_CASE_HERO_IMAGE)}" alt="${escapeHtml(leadItem.title || copy.name || category.name)}" loading="lazy">
+          </span>
+        </a>
+      `;
+    })
+    .join("");
+
+  document.body.innerHTML = `
+    <main class="miniapp-guide-shell">
+      <section class="miniapp-guide-hero" aria-label="3D 行业案例引导页">
+        <img src="${MINIAPP_CASE_HERO_IMAGE}" alt="多行业 3D 案例库封面图">
+        <div class="miniapp-guide-hero-copy">
+          <span>MeTop Cases</span>
+          <h1>选择一个行业，进入对应案例页面</h1>
+          <p>这是 3D 行业案例库的入口页。每个品类都是独立页面，进去后再查看当前品类的 3D/2D 样板、案例列表和预约入口。</p>
+        </div>
+        <div class="miniapp-guide-hero-tags">
+          <strong>7 个品类页面</strong>
+          <strong>独立跳转</strong>
+          <strong>移动端可转发</strong>
+        </div>
+      </section>
+
+      <section class="miniapp-guide-section" aria-labelledby="miniappGuideTitle">
+        <span>Industry Pages</span>
+        <h2 id="miniappGuideTitle">从这里进入其他页面</h2>
+        <p>不要在入口页里切换内容，点击品类卡片后进入对应页面。</p>
+        <div class="miniapp-guide-grid">${categoryCards}</div>
+      </section>
+    </main>
+  `;
+}
+
 function setupMiniAppHomeShell() {
   if (!isMiniAppHome || document.getElementById("miniappHeroHeader")) {
     return;
@@ -1514,10 +1610,11 @@ function setupMiniAppHomeShell() {
 
   const copy = getCopy();
   const heroCopy = MINIAPP_CASE_HERO_COPY[state.lang] || MINIAPP_CASE_HERO_COPY.zh;
-  document.body.classList.add("miniapp-mode", "miniapp-home-mode");
+  document.body.classList.add("miniapp-mode", "miniapp-home-mode", "miniapp-category-page-mode");
   viewerPanel?.insertAdjacentHTML(
     "afterbegin",
     `
+      <a class="miniapp-guide-back" href="${escapeHtml(getMiniAppGuideUrl())}">返回案例入口</a>
       <section class="miniapp-hero-header" id="miniappHeroHeader">
         <span class="miniapp-hero-mark" aria-hidden="true">M</span>
         <div class="miniapp-hero-copy">
@@ -1539,27 +1636,6 @@ function setupMiniAppHomeShell() {
           <strong>可转发案例</strong>
         </div>
       </section>
-      <nav class="miniapp-category-switch" aria-label="切换案例品类">
-        ${caseCategories
-          .map((category) => {
-            const isActive = category.id === activeCaseCategory.id;
-
-            return `
-              <button
-                class="${isActive ? "active" : ""}"
-                type="button"
-                role="tab"
-                data-case-category="${escapeHtml(category.id)}"
-                style="--category-accent: ${escapeHtml(category.accent)}; --category-surface: ${escapeHtml(category.surface || category.bg)};"
-                ${isActive ? 'aria-current="page"' : ""}
-              >
-                <span aria-hidden="true"></span>
-                <strong>${escapeHtml(category.shortName || category.name)}</strong>
-              </button>
-            `;
-          })
-          .join("")}
-      </nav>
       <section class="miniapp-category-profile" id="miniappCategoryProfile" aria-label="当前品类案例说明">
         <span id="miniappProfileAudience">${escapeHtml(getMiniAppIndustryCopy().audience || "行业案例")}</span>
         <h2 id="miniappProfileTitle">${escapeHtml(getMiniAppIndustryCopy().name || activeCaseCategory.shortName)}案例入口</h2>
@@ -1581,7 +1657,6 @@ function setupMiniAppHomeShell() {
       </section>
     `
   );
-  requestAnimationFrame(() => scrollMiniAppCategorySwitch());
 
   const viewerCopy = viewerPanel?.querySelector(".viewer-copy");
 
@@ -1919,8 +1994,7 @@ function bindMiniAppHomeEvents() {
         return;
       }
 
-      scrollMiniAppCategorySwitch(link, "smooth");
-      setActiveCaseCategory(link.dataset.caseCategory);
+      window.location.href = getMiniAppCategoryUrl(link.dataset.caseCategory);
     });
   });
 
@@ -3928,6 +4002,11 @@ function bindTooltipEvents() {
 
 function init() {
   applyCaseTheme();
+
+  if (isMiniAppGuidePage) {
+    initMiniAppGuidePage();
+    return;
+  }
 
   if (!furniture.length) {
     document.body.innerHTML = "<main class='empty-state'>No showroom furniture data found.</main>";
