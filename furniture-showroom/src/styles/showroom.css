@@ -4962,3 +4962,410 @@ body.web-case-library::before {
     grid-template-columns: 1fr;
   }
 }
+
+body.miniapp-home-mode {
+  background: #eef3fb;
+}
+
+body.miniapp-home-mode .viewer-panel {
+  gap: 12px;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) 14px calc(90px + env(safe-area-inset-bottom, 0px));
+  background:
+    linear-gradient(rgba(29, 72, 206, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 72, 206, 0.05) 1px, transparent 1px),
+    linear-gradient(180deg, #f6f9ff 0%, #eef3fb 52%, #f8fbff 100%);
+  background-size: 34px 34px, 34px 34px, auto;
+  color: #101827;
+  font-family: "Microsoft YaHei", "PingFang SC", "Source Han Sans SC", system-ui, sans-serif;
+}
+
+body.miniapp-home-mode .miniapp-hero-header {
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 10px;
+  order: 1;
+  padding: 2px 0 0;
+}
+
+body.miniapp-home-mode .miniapp-hero-mark {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(29, 72, 206, 0.24);
+  border-radius: 12px;
+  background: #1d48ce;
+  box-shadow: 0 14px 28px rgba(29, 72, 206, 0.18);
+  color: #fff;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 950;
+}
+
+body.miniapp-home-mode .miniapp-hero-copy span {
+  color: #1d48ce;
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+body.miniapp-home-mode .miniapp-hero-copy strong {
+  margin-top: 3px;
+  color: #101827;
+  font-family: inherit;
+  font-size: clamp(1.36rem, 5.8vw, 1.72rem);
+  font-weight: 950;
+  line-height: 1.04;
+  white-space: normal;
+}
+
+body.miniapp-home-mode .miniapp-hero-copy p {
+  margin-top: 5px;
+  color: rgba(16, 24, 39, 0.62);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.36;
+}
+
+.miniapp-case-cover {
+  position: relative;
+  order: 2;
+  min-height: 244px;
+  overflow: hidden;
+  border: 1px solid rgba(29, 72, 206, 0.18);
+  border-radius: 18px;
+  background: #101827;
+  box-shadow: 0 22px 54px rgba(16, 24, 39, 0.16);
+}
+
+.miniapp-case-cover img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.miniapp-case-cover::after {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(246, 249, 255, 0.04) 0%, rgba(16, 24, 39, 0.24) 44%, rgba(16, 24, 39, 0.88) 100%),
+    linear-gradient(90deg, rgba(16, 24, 39, 0.12), rgba(16, 24, 39, 0.38));
+  content: "";
+}
+
+.miniapp-case-cover-copy {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 58px;
+  z-index: 1;
+  display: grid;
+  gap: 6px;
+}
+
+.miniapp-case-cover-copy span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.68rem;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+}
+
+.miniapp-case-cover-copy strong {
+  max-width: 13em;
+  color: #fff;
+  font-size: 1.34rem;
+  font-weight: 950;
+  line-height: 1.08;
+}
+
+.miniapp-case-cover-copy p {
+  max-width: 21em;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.42;
+}
+
+.miniapp-case-cover-stats {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.miniapp-case-cover-stats strong {
+  display: grid;
+  min-height: 32px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 900;
+  backdrop-filter: blur(12px);
+}
+
+body.miniapp-home-mode .miniapp-category-switch {
+  order: 3;
+  gap: 8px;
+  margin: 0 -2px;
+  padding: 2px 2px 8px;
+  scroll-behavior: smooth;
+}
+
+body.miniapp-home-mode .miniapp-category-switch button {
+  min-height: 38px;
+  border-color: rgba(29, 72, 206, 0.1);
+  border-radius: 9px;
+  padding: 0 12px 0 10px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(16, 24, 39, 0.05);
+  color: rgba(16, 24, 39, 0.68);
+  font-size: 0.82rem;
+  font-weight: 900;
+  transition:
+    border-color 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.miniapp-home-mode .miniapp-category-switch button.active {
+  border-color: color-mix(in srgb, var(--category-accent), transparent 36%);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--category-accent), #ffffff 18%), var(--category-accent));
+  box-shadow: 0 16px 34px color-mix(in srgb, var(--category-accent), transparent 78%);
+  color: #fff;
+}
+
+.miniapp-category-profile {
+  display: grid;
+  order: 4;
+  gap: 12px;
+  border: 1px solid rgba(29, 72, 206, 0.12);
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+  box-shadow: 0 18px 44px rgba(16, 24, 39, 0.07);
+}
+
+.miniapp-category-profile > span {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.miniapp-category-profile h2 {
+  margin: 0;
+  color: #101827;
+  font-size: 1.34rem;
+  font-weight: 950;
+  line-height: 1.12;
+}
+
+.miniapp-category-profile p {
+  margin: 0;
+  color: rgba(16, 24, 39, 0.64);
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.52;
+}
+
+.miniapp-profile-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.miniapp-profile-grid article {
+  display: grid;
+  gap: 5px;
+  border-radius: 12px;
+  padding: 12px;
+  background: color-mix(in srgb, var(--accent), white 93%);
+}
+
+.miniapp-profile-grid small {
+  color: color-mix(in srgb, var(--accent), #101827 20%);
+  font-size: 0.68rem;
+  font-weight: 950;
+}
+
+.miniapp-profile-grid strong {
+  color: rgba(16, 24, 39, 0.82);
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1.42;
+}
+
+.miniapp-profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.miniapp-profile-tags b {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent), transparent 76%);
+  border-radius: 8px;
+  padding: 0 9px;
+  background: #fff;
+  color: var(--accent-strong);
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+body.miniapp-home-mode .miniapp-showcase-card {
+  order: 5;
+  border-color: rgba(29, 72, 206, 0.12);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 20px 48px rgba(16, 24, 39, 0.08);
+}
+
+body.miniapp-home-mode .miniapp-showcase-card::before {
+  display: block;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent), transparent 90%), transparent 44%),
+    linear-gradient(90deg, rgba(29, 72, 206, 0.04) 1px, transparent 1px);
+  background-size: auto, 28px 28px;
+  opacity: 1;
+}
+
+body.miniapp-home-mode .viewer-copy {
+  padding-right: 130px;
+}
+
+body.miniapp-home-mode .era-label {
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 950;
+}
+
+body.miniapp-home-mode .viewer-copy h1 {
+  color: #101827;
+  font-family: inherit;
+  font-size: clamp(1.22rem, 5.2vw, 1.56rem);
+  font-weight: 950;
+}
+
+body.miniapp-home-mode .viewer-copy > p:first-of-type {
+  color: rgba(16, 24, 39, 0.58);
+  font-size: 0.82rem;
+  font-weight: 750;
+  line-height: 1.36;
+}
+
+body.miniapp-home-mode .miniapp-home-actions {
+  order: 6;
+}
+
+body.miniapp-home-mode .miniapp-primary-action,
+body.miniapp-home-mode .miniapp-secondary-action {
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 950;
+}
+
+body.miniapp-home-mode .miniapp-primary-action {
+  background: var(--accent);
+  box-shadow: 0 16px 32px color-mix(in srgb, var(--accent), transparent 78%);
+}
+
+body.miniapp-home-mode .miniapp-secondary-action {
+  border-color: color-mix(in srgb, var(--accent), transparent 64%);
+  background: #fff;
+  color: var(--accent-strong);
+}
+
+body.miniapp-home-mode .miniapp-benefit-list {
+  order: 7;
+}
+
+body.miniapp-home-mode .miniapp-benefit-row {
+  border-color: rgba(29, 72, 206, 0.1);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(16, 24, 39, 0.05);
+}
+
+body.miniapp-home-mode .miniapp-benefit-icon {
+  color: var(--accent);
+}
+
+body.miniapp-home-mode .miniapp-benefit-row strong {
+  font-family: inherit;
+  font-weight: 950;
+}
+
+body.miniapp-home-mode .miniapp-benefit-row small {
+  color: rgba(16, 24, 39, 0.58);
+  font-family: inherit;
+  font-weight: 700;
+}
+
+body.miniapp-home-mode .miniapp-workflow-card {
+  order: 8;
+  border-color: rgba(29, 72, 206, 0.1);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(16, 24, 39, 0.05);
+}
+
+body.miniapp-home-mode .miniapp-workflow-card h2,
+body.miniapp-home-mode .miniapp-workflow-steps strong {
+  color: #101827;
+  font-family: inherit;
+  font-weight: 950;
+}
+
+body.miniapp-home-mode .miniapp-workflow-card h2 span {
+  background: rgba(29, 72, 206, 0.32);
+}
+
+body.miniapp-home-mode .miniapp-workflow-steps article > span {
+  border-color: rgba(29, 72, 206, 0.14);
+  background: color-mix(in srgb, var(--accent), white 93%);
+  color: var(--accent);
+}
+
+body.miniapp-home-mode .miniapp-workflow-steps article + article::before {
+  border-top-color: rgba(29, 72, 206, 0.28);
+}
+
+body.miniapp-home-mode .miniapp-workflow-steps small {
+  color: rgba(16, 24, 39, 0.58);
+  font-weight: 700;
+}
+
+body.miniapp-home-mode .miniapp-tabbar {
+  border-top-color: rgba(29, 72, 206, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 -14px 34px rgba(16, 24, 39, 0.08);
+}
+
+body.miniapp-home-mode .miniapp-tabbar button {
+  color: rgba(16, 24, 39, 0.56);
+}
+
+body.miniapp-home-mode .miniapp-tabbar .active {
+  color: var(--accent);
+}
+
+body.miniapp-home-mode .miniapp-gallery-sheet,
+body.miniapp-home-mode .miniapp-gallery-backdrop,
+body.miniapp-home-mode .miniapp-gallery-sheet .miniapp-gallery-shell {
+  background: #eef3fb;
+}
