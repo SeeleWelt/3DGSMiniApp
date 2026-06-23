@@ -5,12 +5,12 @@
   "description": "MeTop 实景 3D 家具展厅小程序与 H5 展示项目",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1 --port 4175 furniture-showroom",
+    "dev": "vite --host 127.0.0.1 --port 4176 furniture-showroom",
     "build": "npm run build:web && npm run build:miniapp-h5",
     "build:web": "cd furniture-showroom && vite build --outDir dist --base ./",
     "build:miniapp-h5": "cd furniture-showroom && vite build --outDir dist-miniapp --base ./",
     "preview:web": "cd furniture-showroom && vite preview --host 127.0.0.1 --port 4174 --outDir dist",
-    "preview:miniapp-h5": "cd furniture-showroom && vite preview --host 127.0.0.1 --port 4175 --outDir dist-miniapp"
+    "preview:miniapp-h5": "cd furniture-showroom && vite preview --host 127.0.0.1 --port 4176 --outDir dist-miniapp"
   },
   "dependencies": {
     "playcanvas": "^2.16.2",

@@ -1,13 +1,12 @@
-const PRODUCTION_SHOWROOM_URL = "https://furniture.metop.com.cn/miniapp/";
-const DEVTOOLS_SHOWROOM_URL = "http://127.0.0.1:4175/";
+const PRODUCTION_SHOWROOM_URL = "https://furniture.metop.com.cn/miniapp";
+const DEVTOOLS_SHOWROOM_URL = "http://127.0.0.1:4176/miniapp";
 
 function resolveShowroomUrl() {
   try {
-    const systemInfo = wx.getSystemInfoSync?.();
+    const deviceInfo = wx.getDeviceInfo?.();
     const accountInfo = wx.getAccountInfoSync?.();
     const envVersion = accountInfo?.miniProgram?.envVersion;
-
-    if (systemInfo?.platform === "devtools" && envVersion === "develop") {
+    if (deviceInfo?.platform === "devtools" && envVersion === "develop") {
       return DEVTOOLS_SHOWROOM_URL;
     }
   } catch (error) {

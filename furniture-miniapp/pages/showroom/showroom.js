@@ -1,40 +1,31 @@
 const DEFAULT_SHOWROOM_URL = "https://furniture.metop.com.cn/miniapp/";
 
-function buildShowroomUrl(options = {}) {
+function getShowroomUrl() {
   const app = getApp();
-  const baseUrl = app?.globalData?.showroomUrl || DEFAULT_SHOWROOM_URL;
-  const query = ["miniapp=home", "lang=zh"];
-
-  if (options.item) {
-    query.push(`item=${encodeURIComponent(options.item)}`);
-  }
-
-  const separator = baseUrl.includes("?") ? "&" : "?";
-
-  return `${baseUrl}${separator}${query.join("&")}`;
+  return app?.globalData?.showroomUrl || DEFAULT_SHOWROOM_URL;
 }
 
 Page({
   data: {
-    showroomUrl: DEFAULT_SHOWROOM_URL
+    showroomUrl: getShowroomUrl()
   },
 
-  onLoad(options) {
+  onLoad() {
     this.setData({
-      showroomUrl: buildShowroomUrl(options)
+      showroomUrl: getShowroomUrl()
     });
   },
 
   onShareAppMessage() {
     return {
-      title: "3D 家具展厅，在线看清家具体量",
-      path: "/pages/showroom/showroom"
+      title: "3D 行业案例展厅，在线查看多品类样板",
+      path: "/pages/index/index"
     };
   },
 
   onShareTimeline() {
     return {
-      title: "3D 家具展厅，在线看清家具体量"
+      title: "3D 行业案例展厅，在线查看多品类样板"
     };
   }
 });

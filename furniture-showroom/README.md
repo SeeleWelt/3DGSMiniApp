@@ -36,20 +36,19 @@
 开发预览可以在项目根目录使用 Vite 指向本文件夹：
 
 ```bash
-npx vite --host 127.0.0.1 --port 4175 furniture-showroom
+npx vite --host 127.0.0.1 --port 4176 furniture-showroom
 ```
 
 网页端打开：
 
 ```text
-http://127.0.0.1:4175/
+http://127.0.0.1:4176/
 ```
 
 小程序 H5 模式打开：
 
 ```text
-http://127.0.0.1:4175/?miniapp=home&item=atelier-low-sofa&lang=zh
-http://127.0.0.1:4175/?miniapp=gallery&item=atelier-low-sofa&lang=zh
+http://127.0.0.1:4176/miniapp
 ```
 
 ## 真实 3DGS 模型接入

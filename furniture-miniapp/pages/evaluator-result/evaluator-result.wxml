@@ -1,0 +1,129 @@
+<view class="result-page">
+  <view wx:if="{{result}}" class="result-view">
+    <view class="result-header">
+      <text class="eyebrow">评估结果</text>
+      <text class="title">商品 3D 展示适配度</text>
+    </view>
+
+    <view class="score-card {{result.levelClass}}">
+      <view class="score-top">
+        <view>
+          <text class="score-label">综合评分</text>
+          <text class="level">{{result.level}}</text>
+        </view>
+        <text class="score">{{result.score}}</text>
+      </view>
+      <view class="score-meter">
+        <view class="score-fill" style="width: {{result.score}}%;"></view>
+      </view>
+      <text class="verdict">{{result.verdict}}</text>
+    </view>
+
+    <view class="lead-card">
+      <text class="lead-title">联系方式</text>
+      <input class="contact-input" value="{{contact}}" placeholder="微信 / 手机 / 邮箱，方便发送样板建议" placeholder-class="input-placeholder" bindinput="onContactInput" />
+    </view>
+
+    <view class="result-card">
+      <view class="card-head">
+        <text class="card-title">素材提交</text>
+        <text class="card-subtitle">{{materialFiles.length}} 个文件</text>
+      </view>
+      <text class="material-title">{{result.materialUpload.title}}</text>
+      <text class="material-copy">{{result.materialUpload.copy}}</text>
+      <view wx:if="{{materialFiles.length}}" class="material-list">
+        <view wx:for="{{materialFiles}}" wx:key="id" class="material-file-row">
+          <text class="material-file">{{item.name}}</text>
+          <text class="material-size">{{item.sizeText}}</text>
+        </view>
+      </view>
+      <text wx:else class="material-empty">评估时未上传素材，后续可按拍摄 SOP 补齐。</text>
+    </view>
+
+    <view class="result-card">
+      <view class="card-head">
+        <text class="card-title">优先建议</text>
+        <text class="card-subtitle">销售跟进重点</text>
+      </view>
+      <view class="result-list">
+        <view wx:for="{{result.reasons}}" wx:key="*this" class="result-row">
+          <text class="checkmark">✓</text>
+          <text class="row-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="result-card">
+      <view class="card-head">
+        <text class="card-title">拍摄建议</text>
+        <text class="card-subtitle">素材要求</text>
+      </view>
+      <view class="tag-list">
+        <text wx:for="{{result.shootingTips}}" wx:key="*this" class="tag">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="result-card">
+      <view class="card-head">
+        <text class="card-title">展示方式</text>
+        <text class="card-subtitle">交付形态</text>
+      </view>
+      <view class="display-list">
+        <view wx:for="{{result.displayModes}}" wx:key="title" class="display-item">
+          <text class="display-title">{{item.title}}</text>
+          <text class="display-copy">{{item.copy}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="result-card">
+      <view class="card-head">
+        <text class="card-title">嵌入建议</text>
+        <text class="card-subtitle">商品页落地</text>
+      </view>
+      <view class="result-list">
+        <view wx:for="{{result.embedTips}}" wx:key="*this" class="result-row">
+          <text class="checkmark">✓</text>
+          <text class="row-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="result-card">
+      <view class="card-head">
+        <text class="card-title">下一步</text>
+        <text class="card-subtitle">样板承接</text>
+      </view>
+      <view class="result-list">
+        <view wx:for="{{result.nextActions}}" wx:key="*this" class="result-row">
+          <text class="checkmark">✓</text>
+          <text class="row-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="result-card">
+      <view class="card-head">
+        <text class="card-title">字段摘要</text>
+        <text class="card-subtitle">线索表</text>
+      </view>
+      <view class="field-summary">
+        <view wx:for="{{result.summary}}" wx:key="label" class="summary-row">
+          <text class="summary-label">{{item.label}}</text>
+          <text class="summary-value">{{item.value}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="actions">
+      <button class="primary-action" bindtap="copyLeadMessage">复制线索话术</button>
+      <button class="secondary-action" bindtap="backToEvaluator">重新评估</button>
+    </view>
+  </view>
+
+  <view wx:else class="empty-state">
+    <text class="empty-title">暂无评估结果</text>
+    <text class="empty-copy">请先完成商品 3D 展示适配度评估。</text>
+    <button class="primary-action" bindtap="backToEvaluator">去评估</button>
+  </view>
+</view>

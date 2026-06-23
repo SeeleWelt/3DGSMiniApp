@@ -1,0 +1,15 @@
+<view class="share-page">
+  <view class="hero">
+    <view class="hero-copy">
+      <text class="eyebrow">MetaST 3D Showroom</text>
+      <text class="title">实景 3D 家具展厅</text>
+      <text class="summary">在线看清家具体量、材质与空间比例，适合转发给客户快速确认方案。</text>
+    </view>
+    <image class="hero-image" src="/assets/atelier-low-sofa.png" mode="aspectFit"></image>
+  </view>
+
+  <view class="actions">
+    <button class="primary-action" type="primary" bindtap="enterShowroom">进入 3D 展厅</button>
+    <button class="secondary-action" open-type="share">转发给朋友</button>
+  </view>
+</view>

@@ -1,0 +1,116 @@
+<view class="evaluator-page">
+  <view class="form-view">
+    <view class="topbar">
+      <view>
+        <text class="eyebrow">AI 3D 商品展示</text>
+        <text class="title">适配度评估器</text>
+        <text class="title-copy">轻量表单评估商品是否适合做 3D 展示，并生成首件样板建议。</text>
+      </view>
+      <view class="time-badge">
+        <text class="time-number">30</text>
+        <text class="time-unit">秒</text>
+      </view>
+    </view>
+
+    <view class="form-card">
+      <view class="card-head">
+        <text class="card-title">1. 商品信息</text>
+        <text class="card-subtitle">必填</text>
+      </view>
+
+      <picker mode="selector" range="{{categoryOptions}}" range-key="label" value="{{form.categoryIndex === -1 ? 0 : form.categoryIndex}}" bindchange="onPickerChange" data-key="categoryIndex">
+        <view class="field">
+          <text class="label">商品品类</text>
+          <view class="select-value-wrap">
+            <text class="select-value {{form.categoryIndex === -1 ? 'is-placeholder' : ''}}">{{form.categoryIndex === -1 ? "请选择" : categoryOptions[form.categoryIndex].label}}</text>
+            <text class="chevron">›</text>
+          </view>
+        </view>
+      </picker>
+
+      <picker mode="selector" range="{{priceOptions}}" range-key="label" value="{{form.priceIndex === -1 ? 0 : form.priceIndex}}" bindchange="onPickerChange" data-key="priceIndex">
+        <view class="field">
+          <text class="label">商品客单价</text>
+          <view class="select-value-wrap">
+            <text class="select-value {{form.priceIndex === -1 ? 'is-placeholder' : ''}}">{{form.priceIndex === -1 ? "请选择" : priceOptions[form.priceIndex].label}}</text>
+            <text class="chevron">›</text>
+          </view>
+        </view>
+      </picker>
+
+      <picker mode="selector" range="{{storeOptions}}" range-key="label" value="{{form.storeIndex === -1 ? 0 : form.storeIndex}}" bindchange="onPickerChange" data-key="storeIndex">
+        <view class="field">
+          <text class="label">店铺 / 渠道类型</text>
+          <view class="select-value-wrap">
+            <text class="select-value {{form.storeIndex === -1 ? 'is-placeholder' : ''}}">{{form.storeIndex === -1 ? "请选择" : storeOptions[form.storeIndex].label}}</text>
+            <text class="chevron">›</text>
+          </view>
+        </view>
+      </picker>
+
+      <picker mode="selector" range="{{skuOptions}}" range-key="label" value="{{form.skuIndex === -1 ? 0 : form.skuIndex}}" bindchange="onPickerChange" data-key="skuIndex">
+        <view class="field">
+          <text class="label">SKU 数量</text>
+          <view class="select-value-wrap">
+            <text class="select-value {{form.skuIndex === -1 ? 'is-placeholder' : ''}}">{{form.skuIndex === -1 ? "请选择" : skuOptions[form.skuIndex].label}}</text>
+            <text class="chevron">›</text>
+          </view>
+        </view>
+      </picker>
+
+      <picker mode="selector" range="{{goalOptions}}" range-key="label" value="{{form.goalIndex === -1 ? 0 : form.goalIndex}}" bindchange="onPickerChange" data-key="goalIndex">
+        <view class="field">
+          <text class="label">转化目标</text>
+          <view class="select-value-wrap">
+            <text class="select-value {{form.goalIndex === -1 ? 'is-placeholder' : ''}}">{{form.goalIndex === -1 ? "请选择" : goalOptions[form.goalIndex].label}}</text>
+            <text class="chevron">›</text>
+          </view>
+        </view>
+      </picker>
+
+      <view class="input-block inline-input last-field">
+        <text class="input-label">商品页链接</text>
+        <input class="text-input" value="{{form.productUrl}}" placeholder="可填 1688、独立站、官网等链接" placeholder-class="input-placeholder" bindinput="onTextInput" data-key="productUrl" />
+      </view>
+    </view>
+
+    <view class="form-card">
+      <view class="card-head">
+        <text class="card-title">2. 当前素材</text>
+        <text class="card-subtitle">必填</text>
+      </view>
+
+      <picker mode="selector" range="{{materialOptions}}" range-key="label" value="{{form.materialIndex === -1 ? 0 : form.materialIndex}}" bindchange="onPickerChange" data-key="materialIndex">
+        <view class="field last-field">
+          <text class="label">素材类型</text>
+          <view class="select-value-wrap">
+            <text class="select-value {{form.materialIndex === -1 ? 'is-placeholder' : ''}}">{{form.materialIndex === -1 ? "请选择" : materialOptions[form.materialIndex].label}}</text>
+            <text class="chevron">›</text>
+          </view>
+        </view>
+      </picker>
+    </view>
+
+    <view wx:if="{{materialUpload}}" class="upload-card">
+      <view class="card-head">
+        <text class="card-title">素材上传</text>
+        <text class="card-subtitle">可选</text>
+      </view>
+      <text class="upload-title">{{materialUpload.title}}</text>
+      <text class="upload-copy">{{materialUpload.copy}}</text>
+
+      <button wx:if="{{materialUpload.action}}" class="upload-action" bindtap="chooseMaterialFiles">
+        {{materialUpload.action}}
+      </button>
+
+      <view wx:if="{{materialFiles.length}}" class="file-list">
+        <view wx:for="{{materialFiles}}" wx:key="id" class="file-row">
+          <text class="file-name">{{item.name}}</text>
+          <text class="file-size">{{item.sizeText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <button class="primary-action" bindtap="generateResult">生成评估结果</button>
+  </view>
+</view>

@@ -48,6 +48,84 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+body:not(.miniapp-mode) {
+  --web-page-grid:
+    linear-gradient(color-mix(in srgb, var(--accent), transparent 98%) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent), transparent 98%) 1px, transparent 1px);
+  --web-page-glow:
+    radial-gradient(circle at 16% 0%, color-mix(in srgb, var(--accent), transparent 90%), transparent 30%);
+  --web-panel-decor:
+    radial-gradient(circle at 84% 16%, color-mix(in srgb, var(--accent), transparent 90%), transparent 30%);
+  --web-visual-decor:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), transparent 58%);
+  background:
+    var(--web-page-grid),
+    var(--web-page-glow),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg), #ffffff 24%) 0%, #f8fbff 72%);
+  background-size: 56px 56px, 56px 56px, auto, auto;
+}
+
+body:not(.miniapp-mode)[data-case-category="toys"] {
+  --web-panel-decor:
+    radial-gradient(circle at 84% 16%, rgba(232, 63, 143, 0.12), transparent 28%);
+  --web-visual-decor:
+    radial-gradient(circle at 82% 20%, rgba(232, 63, 143, 0.16), transparent 26%);
+}
+
+body:not(.miniapp-mode)[data-case-category="home"] {
+  --web-panel-decor:
+    linear-gradient(115deg, rgba(143, 113, 87, 0.12) 0 24%, transparent 24% 100%),
+    radial-gradient(circle at 86% 84%, rgba(143, 113, 87, 0.14), transparent 28%);
+  --web-visual-decor:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), transparent 55%),
+    linear-gradient(90deg, rgba(143, 113, 87, 0.16) 0 20px, transparent 20px);
+}
+
+body:not(.miniapp-mode)[data-case-category="decor"] {
+  --web-panel-decor:
+    radial-gradient(circle at 18% 16%, rgba(210, 75, 42, 0.1), transparent 28%),
+    radial-gradient(circle at 88% 82%, rgba(16, 14, 21, 0.045), transparent 30%);
+  --web-visual-decor:
+    radial-gradient(circle at 82% 20%, rgba(210, 75, 42, 0.15), transparent 22%);
+}
+
+body:not(.miniapp-mode)[data-case-category="fashion"] {
+  --web-panel-decor:
+    linear-gradient(120deg, rgba(201, 179, 125, 0.22) 0 1px, transparent 1px 100%),
+    radial-gradient(circle at 78% 12%, rgba(201, 179, 125, 0.24), transparent 24%);
+  --web-visual-decor:
+    linear-gradient(120deg, rgba(216, 192, 130, 0.18) 0 34%, transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.13), transparent 48%);
+}
+
+body:not(.miniapp-mode)[data-case-category="industry"] {
+  --web-panel-decor:
+    linear-gradient(rgba(0, 120, 138, 0.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 120, 138, 0.11) 1px, transparent 1px);
+  --web-visual-decor:
+    linear-gradient(rgba(0, 120, 138, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 120, 138, 0.1) 1px, transparent 1px);
+}
+
+body:not(.miniapp-mode)[data-case-category="factory"] {
+  --web-panel-decor:
+    linear-gradient(90deg, rgba(239, 111, 24, 0.18) 0 72px, transparent 72px),
+    repeating-linear-gradient(0deg, rgba(34, 141, 102, 0.08) 0 1px, transparent 1px 28px);
+  --web-visual-decor:
+    radial-gradient(ellipse at 50% 76%, rgba(239, 111, 24, 0.1), transparent 36%),
+    linear-gradient(rgba(239, 111, 24, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 141, 102, 0.045) 1px, transparent 1px);
+}
+
+body:not(.miniapp-mode)[data-case-category="space"] {
+  --web-panel-decor:
+    linear-gradient(135deg, rgba(29, 72, 206, 0.12) 0 22%, transparent 22%),
+    repeating-linear-gradient(90deg, rgba(29, 72, 206, 0.07) 0 1px, transparent 1px 34px);
+  --web-visual-decor:
+    linear-gradient(135deg, rgba(29, 72, 206, 0.15) 0 30%, transparent 30%),
+    linear-gradient(90deg, rgba(29, 72, 206, 0.08) 1px, transparent 1px);
+}
+
 button,
 input,
 select,
@@ -344,6 +422,37 @@ svg {
   border: 1px solid rgba(222, 213, 200, 0.92);
   background: var(--surface);
   box-shadow: var(--shadow-soft);
+}
+
+body:not(.miniapp-mode) .viewer-panel,
+body:not(.miniapp-mode) .cases-section {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.72)),
+    var(--bg-soft);
+}
+
+body:not(.miniapp-mode) .viewer-panel::before,
+body:not(.miniapp-mode) .cases-section::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--web-panel-decor);
+  content: "";
+  pointer-events: none;
+}
+
+body:not(.miniapp-mode) .viewer-panel > *,
+body:not(.miniapp-mode) .cases-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+body:not(.miniapp-mode)[data-case-category="industry"] .viewer-panel::before,
+body:not(.miniapp-mode)[data-case-category="industry"] .cases-section::before {
+  background-size: 24px 24px;
+  opacity: 0.72;
 }
 
 .category-rail,
@@ -1603,6 +1712,8 @@ svg {
 }
 
 .case-card {
+  position: relative;
+  overflow: hidden;
   display: grid;
   gap: 12px;
   border: 1px solid var(--line);
@@ -1612,6 +1723,21 @@ svg {
   text-align: left;
   cursor: pointer;
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+body:not(.miniapp-mode) .case-card::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--web-panel-decor);
+  content: "";
+  opacity: 0.26;
+  pointer-events: none;
+}
+
+body:not(.miniapp-mode) .case-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .case-card:hover,
@@ -1625,7 +1751,10 @@ svg {
   overflow: hidden;
   aspect-ratio: 4 / 3;
   border-radius: 14px;
-  background: var(--surface-muted);
+  background:
+    var(--web-visual-decor),
+    var(--surface-muted);
+  background-size: auto, 24px 24px, 24px 24px, auto;
 }
 
 .case-card h3 {
@@ -1729,9 +1858,6 @@ svg {
 
 body.miniapp-mode {
   min-width: 0;
-  background:
-    radial-gradient(circle at 82% 8%, rgba(155, 98, 47, 0.14), transparent 26rem),
-    linear-gradient(180deg, #fffdf8 0%, #f6efe4 58%, #eee3d4 100%);
 }
 
 body.miniapp-home-mode .site-shell {
@@ -1825,20 +1951,6 @@ body.miniapp-home-mode .viewer-panel {
   margin-top: 3px;
   color: var(--text-soft);
   font-size: 0.72rem;
-}
-
-.miniapp-view-toggle {
-  min-width: 88px;
-  height: 40px;
-  flex: 0 0 auto;
-  border: 1px solid rgba(155, 98, 47, 0.32);
-  border-radius: 999px;
-  background: rgba(255, 253, 248, 0.78);
-  box-shadow: 0 10px 24px rgba(68, 50, 31, 0.08);
-  color: var(--accent-strong);
-  cursor: pointer;
-  font-size: 0.88rem;
-  font-weight: 760;
 }
 
 body.miniapp-home-mode .viewer-copy {
@@ -1953,10 +2065,193 @@ body.miniapp-home-mode .model-stage.using-3d-model.model-loading .model-object {
   color: var(--accent-strong);
 }
 
+body.miniapp-mode {
+  --miniapp-page-grid:
+    linear-gradient(rgba(143, 113, 87, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(143, 113, 87, 0.035) 1px, transparent 1px);
+  --miniapp-page-bg:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.96), transparent 28rem),
+    linear-gradient(180deg, #fffdf9 0%, #fbf7f0 48%, #f3eadf 100%);
+  --miniapp-panel-decor:
+    radial-gradient(circle at 16% 0%, rgba(143, 113, 87, 0.1), transparent 30%);
+  --miniapp-panel-bg:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.94), transparent 25rem),
+    linear-gradient(180deg, rgba(255, 253, 249, 0.96), rgba(246, 239, 228, 0.82));
+  --miniapp-card-decor:
+    linear-gradient(115deg, rgba(143, 113, 87, 0.12) 0 24%, transparent 24% 100%),
+    radial-gradient(circle at 86% 84%, rgba(143, 113, 87, 0.14), transparent 28%);
+  --miniapp-card-bg:
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.98), rgba(246, 239, 228, 0.54) 58%, rgba(255, 253, 248, 0.66) 100%),
+    rgba(255, 253, 248, 0.78);
+  --miniapp-visual-decor:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.68), transparent 62%);
+  --miniapp-primary-bg:
+    radial-gradient(circle at 18% 18%, rgba(158, 103, 55, 0.68), transparent 48%),
+    linear-gradient(135deg, #6a3f23, #161d18);
+  --miniapp-card-line: rgba(203, 187, 168, 0.84);
+  --miniapp-soft-panel: rgba(255, 253, 248, 0.72);
+  background:
+    var(--miniapp-page-bg);
+}
+
+body.miniapp-mode[data-case-category="toys"] {
+  --miniapp-page-bg:
+    radial-gradient(circle at 82% 4%, rgba(232, 63, 143, 0.22), transparent 21rem),
+    radial-gradient(circle at 12% 16%, rgba(139, 211, 255, 0.24), transparent 18rem),
+    linear-gradient(180deg, #fff7fd 0%, #fff0fa 52%, #f5f8ff 100%);
+  --miniapp-page-grid:
+    linear-gradient(rgba(232, 63, 143, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 72, 206, 0.035) 1px, transparent 1px);
+  --miniapp-panel-decor:
+    radial-gradient(circle at 16% 0%, rgba(232, 63, 143, 0.1), transparent 30%);
+  --miniapp-panel-bg:
+    radial-gradient(circle at 58% 16%, rgba(255, 255, 255, 0.96), transparent 18rem),
+    linear-gradient(180deg, rgba(255, 246, 253, 0.98), rgba(255, 229, 244, 0.86));
+  --miniapp-card-decor:
+    radial-gradient(circle at 84% 16%, rgba(232, 63, 143, 0.11), transparent 30%);
+  --miniapp-card-bg:
+    radial-gradient(circle at 48% 44%, rgba(255, 255, 255, 0.98), rgba(255, 221, 240, 0.72) 57%, rgba(248, 251, 255, 0.78) 100%),
+    #fff7fd;
+  --miniapp-visual-decor:
+    radial-gradient(circle at 82% 20%, rgba(232, 63, 143, 0.12), transparent 28%);
+  --miniapp-primary-bg: linear-gradient(135deg, #e83f8f, #7d3cff);
+  --miniapp-card-line: rgba(232, 63, 143, 0.24);
+  --miniapp-soft-panel: rgba(255, 248, 253, 0.8);
+}
+
+body.miniapp-mode[data-case-category="decor"] {
+  --miniapp-page-bg:
+    radial-gradient(circle at 84% 4%, rgba(210, 75, 42, 0.18), transparent 22rem),
+    linear-gradient(180deg, #fffdf7 0%, #fff4e4 54%, #f5fbf4 100%);
+  --miniapp-page-grid:
+    linear-gradient(rgba(210, 75, 42, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 14, 21, 0.024) 1px, transparent 1px);
+  --miniapp-panel-decor:
+    radial-gradient(circle at 16% 0%, rgba(210, 75, 42, 0.1), transparent 30%);
+  --miniapp-panel-bg:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.96), transparent 20rem),
+    linear-gradient(180deg, rgba(255, 253, 247, 0.98), rgba(255, 238, 215, 0.84));
+  --miniapp-card-decor:
+    radial-gradient(circle at 18% 16%, rgba(210, 75, 42, 0.08), transparent 30%);
+  --miniapp-card-bg:
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.98), rgba(255, 228, 216, 0.7) 58%, rgba(255, 253, 247, 0.8) 100%),
+    #fffdf7;
+  --miniapp-visual-decor:
+    radial-gradient(circle at 82% 20%, rgba(210, 75, 42, 0.08), transparent 28%);
+  --miniapp-primary-bg: linear-gradient(135deg, #d24b2a, #f0a13b);
+  --miniapp-card-line: rgba(210, 75, 42, 0.24);
+  --miniapp-soft-panel: rgba(255, 253, 247, 0.8);
+}
+
+body.miniapp-mode[data-case-category="fashion"] {
+  --miniapp-page-bg:
+    radial-gradient(circle at 82% 5%, rgba(216, 192, 130, 0.24), transparent 21rem),
+    linear-gradient(180deg, #f8f5ef 0%, #eee9df 54%, #e7edf2 100%);
+  --miniapp-page-grid:
+    linear-gradient(rgba(37, 48, 72, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(216, 192, 130, 0.035) 1px, transparent 1px);
+  --miniapp-panel-decor:
+    radial-gradient(circle at 16% 0%, rgba(216, 192, 130, 0.16), transparent 30%);
+  --miniapp-panel-bg:
+    radial-gradient(circle at 52% 18%, rgba(255, 255, 255, 0.92), transparent 20rem),
+    linear-gradient(180deg, rgba(248, 245, 239, 0.98), rgba(232, 225, 210, 0.88));
+  --miniapp-card-decor:
+    radial-gradient(circle at 78% 12%, rgba(201, 179, 125, 0.18), transparent 28%);
+  --miniapp-card-bg:
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.94), rgba(216, 192, 130, 0.28) 58%, rgba(248, 245, 239, 0.82) 100%),
+    #f8f5ef;
+  --miniapp-visual-decor:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.13), transparent 54%);
+  --miniapp-primary-bg: linear-gradient(135deg, #253048, #0f1724);
+  --miniapp-card-line: rgba(37, 48, 72, 0.18);
+  --miniapp-soft-panel: rgba(251, 248, 241, 0.78);
+}
+
+body.miniapp-mode[data-case-category="industry"] {
+  --miniapp-page-bg:
+    radial-gradient(circle at 80% 4%, rgba(0, 120, 138, 0.2), transparent 22rem),
+    linear-gradient(180deg, #f7feff 0%, #e8f7f9 54%, #eef4f3 100%);
+  --miniapp-page-grid:
+    linear-gradient(rgba(0, 120, 138, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 120, 138, 0.035) 1px, transparent 1px);
+  --miniapp-panel-decor:
+    radial-gradient(circle at 16% 0%, rgba(0, 120, 138, 0.1), transparent 30%);
+  --miniapp-panel-bg:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.94), transparent 20rem),
+    linear-gradient(180deg, rgba(248, 254, 255, 0.98), rgba(218, 243, 246, 0.86));
+  --miniapp-card-decor:
+    linear-gradient(rgba(0, 120, 138, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 120, 138, 0.055) 1px, transparent 1px);
+  --miniapp-card-bg:
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.96), rgba(217, 243, 246, 0.72) 58%, rgba(248, 254, 255, 0.82) 100%),
+    #f8feff;
+  --miniapp-visual-decor:
+    linear-gradient(rgba(0, 120, 138, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 120, 138, 0.05) 1px, transparent 1px);
+  --miniapp-primary-bg: linear-gradient(135deg, #00788a, #18364a);
+  --miniapp-card-line: rgba(0, 120, 138, 0.22);
+  --miniapp-soft-panel: rgba(248, 254, 255, 0.78);
+}
+
+body.miniapp-mode[data-case-category="factory"] {
+  --miniapp-page-bg:
+    radial-gradient(circle at 82% 4%, rgba(239, 111, 24, 0.19), transparent 22rem),
+    radial-gradient(circle at 9% 19%, rgba(34, 141, 102, 0.14), transparent 18rem),
+    linear-gradient(180deg, #fffdf8 0%, #fff0e4 54%, #f4f8ef 100%);
+  --miniapp-page-grid:
+    linear-gradient(rgba(239, 111, 24, 0.032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 141, 102, 0.028) 1px, transparent 1px);
+  --miniapp-panel-decor:
+    radial-gradient(circle at 16% 0%, rgba(239, 111, 24, 0.1), transparent 30%);
+  --miniapp-panel-bg:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.95), transparent 20rem),
+    linear-gradient(180deg, rgba(255, 253, 248, 0.98), rgba(255, 231, 211, 0.86));
+  --miniapp-card-decor:
+    linear-gradient(90deg, rgba(239, 111, 24, 0.1) 0 56px, transparent 56px);
+  --miniapp-card-bg:
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.96), rgba(255, 231, 211, 0.72) 58%, rgba(249, 253, 245, 0.82) 100%),
+    #fffdf8;
+  --miniapp-visual-decor:
+    radial-gradient(ellipse at 50% 76%, rgba(239, 111, 24, 0.08), transparent 38%);
+  --miniapp-primary-bg: linear-gradient(135deg, #ef6f18, #228d66);
+  --miniapp-card-line: rgba(239, 111, 24, 0.24);
+  --miniapp-soft-panel: rgba(255, 253, 248, 0.78);
+}
+
+body.miniapp-mode[data-case-category="space"] {
+  --miniapp-page-bg:
+    radial-gradient(circle at 82% 4%, rgba(29, 72, 206, 0.2), transparent 22rem),
+    linear-gradient(180deg, #f8fbff 0%, #edf3ff 54%, #f5f8ff 100%);
+  --miniapp-page-grid:
+    linear-gradient(rgba(29, 72, 206, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 72, 206, 0.035) 1px, transparent 1px);
+  --miniapp-panel-decor:
+    radial-gradient(circle at 16% 0%, rgba(29, 72, 206, 0.1), transparent 30%);
+  --miniapp-panel-bg:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.94), transparent 20rem),
+    linear-gradient(180deg, rgba(248, 251, 255, 0.98), rgba(223, 232, 255, 0.86));
+  --miniapp-card-decor:
+    linear-gradient(135deg, rgba(29, 72, 206, 0.08) 0 22%, transparent 22%);
+  --miniapp-card-bg:
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.96), rgba(223, 232, 255, 0.72) 58%, rgba(248, 251, 255, 0.82) 100%),
+    #f8fbff;
+  --miniapp-visual-decor:
+    linear-gradient(135deg, rgba(29, 72, 206, 0.08) 0 30%, transparent 30%);
+  --miniapp-primary-bg: linear-gradient(135deg, #1d48ce, #5076e5);
+  --miniapp-card-line: rgba(29, 72, 206, 0.22);
+  --miniapp-soft-panel: rgba(248, 251, 255, 0.78);
+}
+
 .miniapp-gallery-shell {
   min-height: 100vh;
   min-height: 100dvh;
+  overflow-x: hidden;
   padding: calc(18px + env(safe-area-inset-top, 0px)) 14px calc(26px + env(safe-area-inset-bottom, 0px));
+  background:
+    var(--miniapp-page-grid),
+    var(--miniapp-panel-decor),
+    var(--miniapp-panel-bg);
+  background-size: 56px 56px, 56px 56px, auto, auto;
 }
 
 .miniapp-gallery-header {
@@ -1970,12 +2265,13 @@ body.miniapp-home-mode .model-stage.using-3d-model.model-loading .model-object {
 .miniapp-back-button {
   height: 36px;
   padding: 0 14px;
-  border: 1px solid rgba(155, 98, 47, 0.26);
+  border: 1px solid var(--miniapp-card-line);
   border-radius: 999px;
-  background: rgba(255, 253, 248, 0.78);
+  background: var(--miniapp-soft-panel);
   color: var(--accent-strong);
   font-size: 0.84rem;
   font-weight: 760;
+  box-shadow: 0 10px 22px rgba(82, 60, 39, 0.06);
 }
 
 .miniapp-gallery-header span {
@@ -1988,6 +2284,7 @@ body.miniapp-home-mode .model-stage.using-3d-model.model-loading .model-object {
 
 .miniapp-gallery-header h1 {
   margin: 5px 0 6px;
+  color: var(--text);
   font-family: var(--serif);
   font-size: clamp(1.48rem, 6.4vw, 2rem);
   font-weight: 520;
@@ -2007,26 +2304,45 @@ body.miniapp-home-mode .model-stage.using-3d-model.model-loading .model-object {
 }
 
 .miniapp-furniture-card {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(108px, 38%) 1fr;
   gap: 11px;
   width: 100%;
   padding: 10px;
-  border: 1px solid rgba(203, 187, 168, 0.72);
+  border: 1px solid var(--miniapp-card-line);
   border-radius: 20px;
   background:
-    radial-gradient(circle at 48% 42%, rgba(155, 98, 47, 0.1), transparent 64%),
-    rgba(255, 253, 248, 0.82);
+    var(--miniapp-card-bg);
   box-shadow: 0 14px 38px rgba(68, 50, 31, 0.08);
   color: var(--text);
   text-align: left;
 }
 
-.miniapp-furniture-card.active {
-  border-color: rgba(155, 98, 47, 0.52);
+.miniapp-furniture-card::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
   background:
-    radial-gradient(circle at 50% 42%, rgba(155, 98, 47, 0.16), transparent 64%),
-    rgba(255, 253, 248, 0.92);
+    var(--miniapp-card-decor);
+  content: "";
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+.miniapp-furniture-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.miniapp-furniture-card.active {
+  border-color: var(--accent);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 48%),
+    var(--miniapp-card-bg);
+  box-shadow:
+    0 16px 36px rgba(68, 50, 31, 0.1),
+    inset 0 0 0 1px var(--accent-soft);
 }
 
 .miniapp-card-image {
@@ -2034,7 +2350,10 @@ body.miniapp-home-mode .model-stage.using-3d-model.model-loading .model-object {
   overflow: hidden;
   min-height: 114px;
   border-radius: 15px;
-  background: rgba(239, 231, 218, 0.88);
+  background:
+    var(--miniapp-visual-decor),
+    var(--miniapp-soft-panel);
+  background-size: auto, auto;
 }
 
 .miniapp-card-image img {
@@ -2042,7 +2361,7 @@ body.miniapp-home-mode .model-stage.using-3d-model.model-loading .model-object {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 18px 20px rgba(85, 54, 28, 0.15));
+  filter: drop-shadow(0 18px 20px var(--shadow));
 }
 
 .miniapp-card-copy {
@@ -2082,19 +2401,14 @@ body.miniapp-home-mode .model-stage.using-3d-model.model-loading .model-object {
   flex: 1 0 auto;
   min-width: 0;
   padding: 6px 8px;
+  border: 1px solid var(--miniapp-card-line);
   border-radius: 999px;
-  background: rgba(239, 231, 218, 0.72);
-  color: var(--text-soft);
+  background: var(--miniapp-soft-panel);
+  color: var(--accent-strong);
   font-size: 0.68rem;
   font-weight: 760;
   text-align: center;
   white-space: nowrap;
-}
-
-body.miniapp-home-mode {
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.96), transparent 28rem),
-    linear-gradient(180deg, #fffdf9 0%, #fbf7f0 48%, #f3eadf 100%);
 }
 
 body.miniapp-home-mode .viewer-panel {
@@ -2105,8 +2419,10 @@ body.miniapp-home-mode .viewer-panel {
   overflow-y: auto;
   padding: calc(18px + env(safe-area-inset-top, 0px)) 14px calc(88px + env(safe-area-inset-bottom, 0px));
   background:
-    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.94), transparent 25rem),
-    linear-gradient(180deg, rgba(255, 253, 249, 0.96), rgba(246, 239, 228, 0.82));
+    var(--miniapp-page-grid),
+    var(--miniapp-panel-decor),
+    var(--miniapp-panel-bg);
+  background-size: 56px 56px, 56px 56px, auto, auto;
 }
 
 .miniapp-hero-header {
@@ -2133,6 +2449,10 @@ body.miniapp-home-mode .viewer-panel {
 
 .miniapp-hero-copy {
   min-width: 0;
+  transition:
+    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .miniapp-hero-copy span,
@@ -2168,37 +2488,267 @@ body.miniapp-home-mode .viewer-panel {
   line-height: 1.28;
 }
 
+.miniapp-category-switch {
+  display: flex;
+  order: 2;
+  gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  margin: 2px -2px 0;
+  padding: 3px 2px 8px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.miniapp-category-switch::-webkit-scrollbar {
+  display: none;
+}
+
+.miniapp-category-switch button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  scroll-snap-align: start;
+  border: 1px solid rgba(22, 32, 51, 0.08);
+  border-radius: 999px;
+  padding: 0 13px 0 10px;
+  background: rgba(255, 253, 248, 0.78);
+  box-shadow: 0 10px 22px rgba(82, 60, 39, 0.05);
+  color: rgba(32, 28, 24, 0.76);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 780;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.miniapp-category-switch button span {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--category-accent);
+  box-shadow: 0 0 0 4px rgba(22, 32, 51, 0.06);
+}
+
+.miniapp-category-switch button.active {
+  border-color: var(--category-accent);
+  background:
+    linear-gradient(135deg, rgba(22, 32, 51, 0.18), rgba(22, 32, 51, 0)),
+    var(--category-accent);
+  box-shadow: 0 14px 28px rgba(22, 32, 51, 0.12);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.miniapp-category-switch button.active span {
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.22);
+}
+
 .miniapp-showcase-card {
   position: relative;
-  order: 2;
+  order: 3;
   overflow: hidden;
   min-height: 0;
   padding: 14px 14px 12px;
-  border: 1px solid rgba(203, 187, 168, 0.84);
+  border: 1px solid var(--miniapp-card-line);
   border-radius: 22px;
   background:
-    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.98), rgba(246, 239, 228, 0.54) 58%, rgba(255, 253, 248, 0.66) 100%),
-    rgba(255, 253, 248, 0.78);
+    var(--miniapp-card-bg);
   box-shadow:
     0 24px 54px rgba(82, 60, 39, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.miniapp-card-toggle {
+.miniapp-showcase-card::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    var(--miniapp-card-decor);
+  content: "";
+  opacity: 0.32;
+  pointer-events: none;
+}
+
+.miniapp-showcase-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.miniapp-mode .miniapp-gallery-shell,
+body.miniapp-home-mode .viewer-panel {
+  background:
+    var(--miniapp-panel-bg);
+}
+
+body.miniapp-mode .miniapp-furniture-card::before,
+body.miniapp-mode .miniapp-showcase-card::before {
+  display: none;
+}
+
+body.miniapp-mode .miniapp-card-image {
+  background:
+    var(--miniapp-soft-panel);
+}
+
+.miniapp-showcase-controls {
   position: absolute;
   top: 14px;
   right: 14px;
   z-index: 18;
-  min-width: 78px;
-  height: 34px;
-  padding: 0 12px;
-  background: rgba(255, 253, 248, 0.9);
-  font-size: 0.86rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.miniapp-view-switch {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid color-mix(in srgb, var(--accent), transparent 76%);
+  border-radius: 8px;
+  background: #fffdf8;
+  box-shadow: 0 12px 28px rgba(68, 50, 31, 0.1);
+}
+
+.miniapp-view-switch button {
+  min-width: 38px;
+  min-height: 30px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(32, 28, 24, 0.62);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 860;
+  line-height: 1;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.miniapp-view-switch button.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.miniapp-view-switch button:active,
+.miniapp-rotate-toggle:active {
+  transform: translateY(1px);
+}
+
+.miniapp-rotate-toggle {
+  display: inline-grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent), white 20%);
+  border-radius: 8px;
+  background: var(--accent);
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--accent), transparent 78%);
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.miniapp-rotate-toggle.is-paused {
+  border-color: color-mix(in srgb, var(--accent), white 44%);
+  background: color-mix(in srgb, var(--accent), white 82%);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--accent), transparent 88%);
+  color: var(--accent);
+}
+
+.miniapp-rotate-toggle:disabled {
+  cursor: default;
+  opacity: 0.62;
+}
+
+.miniapp-rotate-toggle span {
+  position: relative;
+  width: 15px;
+  height: 16px;
+  transition:
+    transform 220ms ease,
+    width 180ms ease;
+}
+
+.miniapp-rotate-toggle span::before,
+.miniapp-rotate-toggle span::after {
+  position: absolute;
+  top: 0;
+  width: 5px;
+  height: 16px;
+  border-radius: 2px;
+  background: currentColor;
+  content: "";
+  transition:
+    inset 220ms ease,
+    width 220ms ease,
+    height 220ms ease,
+    border 220ms ease,
+    border-radius 220ms ease,
+    opacity 160ms ease,
+    transform 220ms cubic-bezier(0.18, 1.2, 0.32, 1);
+}
+
+.miniapp-rotate-toggle span::before {
+  left: 2px;
+}
+
+.miniapp-rotate-toggle span::after {
+  right: 2px;
+}
+
+.miniapp-rotate-toggle.is-paused span {
+  transform: translateX(1px);
+}
+
+.miniapp-rotate-toggle.is-paused span::before {
+  top: 1px;
+  left: 3px;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 12px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  transform: translateX(1px);
+}
+
+.miniapp-rotate-toggle.is-paused span::after {
+  opacity: 0;
+  transform: translateX(6px) scaleY(0.4);
 }
 
 body.miniapp-home-mode .viewer-copy {
   margin: 0;
-  padding-right: 88px;
+  padding-right: 138px;
 }
 
 body.miniapp-home-mode .era-label {
@@ -2210,17 +2760,16 @@ body.miniapp-home-mode .era-label {
 body.miniapp-home-mode .viewer-copy h1 {
   max-width: 100%;
   margin: 7px 0 5px;
-  overflow: hidden;
-  font-size: clamp(1.42rem, 6.2vw, 1.78rem);
-  line-height: 1.08;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: clamp(1.32rem, 5.6vw, 1.68rem);
+  line-height: 1.12;
+  white-space: normal;
 }
 
 body.miniapp-home-mode .viewer-copy > p:first-of-type {
   color: rgba(95, 85, 75, 0.78);
   font-size: 0.88rem;
   line-height: 1.25;
+  max-width: 100%;
 }
 
 body.miniapp-home-mode .model-stage {
@@ -2338,9 +2887,13 @@ body.miniapp-home-mode .model-stage.product-mode .dimension-overlay {
 
 body.miniapp-home-mode .miniapp-home-actions {
   grid-template-columns: 1fr 1fr;
-  order: 3;
+  order: 4;
   gap: 10px;
   margin-top: 2px;
+  transition:
+    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.miniapp-home-mode .miniapp-primary-action,
@@ -2360,8 +2913,7 @@ body.miniapp-home-mode .miniapp-secondary-action {
 
 body.miniapp-home-mode .miniapp-primary-action {
   background:
-    radial-gradient(circle at 18% 18%, rgba(158, 103, 55, 0.68), transparent 48%),
-    linear-gradient(135deg, #6a3f23, #161d18);
+    var(--miniapp-primary-bg);
   box-shadow: 0 16px 32px rgba(74, 44, 24, 0.18);
 }
 
@@ -2381,8 +2933,12 @@ body.miniapp-home-mode .miniapp-secondary-action svg {
 
 .miniapp-benefit-list {
   display: grid;
-  order: 4;
+  order: 5;
   gap: 8px;
+  transition:
+    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .miniapp-benefit-row {
@@ -2394,7 +2950,7 @@ body.miniapp-home-mode .miniapp-secondary-action svg {
   padding: 8px 11px;
   border: 1px solid rgba(222, 213, 200, 0.78);
   border-radius: 16px;
-  background: rgba(255, 253, 248, 0.7);
+  background: var(--miniapp-soft-panel);
   box-shadow: 0 12px 26px rgba(82, 60, 39, 0.04);
 }
 
@@ -2447,12 +3003,16 @@ body.miniapp-home-mode .miniapp-secondary-action svg {
 }
 
 .miniapp-workflow-card {
-  order: 5;
+  order: 6;
   padding: 16px 12px 14px;
   border: 1px solid rgba(222, 213, 200, 0.82);
   border-radius: 18px;
-  background: rgba(255, 253, 248, 0.72);
+  background: var(--miniapp-soft-panel);
   box-shadow: 0 12px 28px rgba(82, 60, 39, 0.04);
+  transition:
+    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .miniapp-workflow-card h2 {
@@ -2573,6 +3133,57 @@ body.miniapp-home-mode .miniapp-secondary-action svg {
   font-size: 0.72rem;
 }
 
+.miniapp-gallery-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 58;
+  display: grid;
+  background:
+    var(--miniapp-page-bg),
+    var(--bg-soft);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.miniapp-gallery-sheet.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.miniapp-gallery-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background:
+    var(--miniapp-page-bg),
+    var(--bg-soft);
+}
+
+.miniapp-gallery-sheet .miniapp-gallery-shell {
+  position: relative;
+  z-index: 1;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+  background:
+    var(--miniapp-panel-bg),
+    var(--bg-soft);
+  transform: translateY(14px);
+  transition: transform 180ms ease;
+}
+
+.miniapp-gallery-sheet .miniapp-furniture-card {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.46)),
+    var(--bg-soft);
+}
+
+.miniapp-gallery-sheet.open .miniapp-gallery-shell {
+  transform: translateY(0);
+}
+
 .miniapp-contact-sheet {
   position: fixed;
   inset: 0;
@@ -2663,7 +3274,8 @@ body.miniapp-home-mode .miniapp-secondary-action svg {
   font-size: 0.82rem;
 }
 
-body.miniapp-contact-open {
+body.miniapp-contact-open,
+body.miniapp-gallery-open {
   overflow: hidden;
 }
 

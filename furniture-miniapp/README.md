@@ -31,13 +31,13 @@
 开发时先启动家具展厅本地服务：
 
 ```bash
-npx vite --host 127.0.0.1 --port 4175 furniture-showroom
+npx vite --host 127.0.0.1 --port 4176 furniture-showroom
 ```
 
 再打开微信开发者工具。本项目在开发者工具环境中会自动把 web-view 指向：
 
 ```text
-http://127.0.0.1:4175/?miniapp=home&item=atelier-low-sofa&lang=zh
+http://127.0.0.1:4176/miniapp
 ```
 
 需要在微信开发者工具右上角「详情 / 本地设置」里勾选：
@@ -50,7 +50,7 @@ http://127.0.0.1:4175/?miniapp=home&item=atelier-low-sofa&lang=zh
 
 ## 页面结构
 
-- `pages/index/index`: 小程序入口，打开 `/miniapp/?miniapp=home`
+- `pages/index/index`: 小程序入口，打开 `/miniapp`
 - `pages/showroom/showroom`: 备用 web-view 展厅页
 
 ## 发布关系

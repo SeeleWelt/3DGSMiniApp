@@ -4,7 +4,7 @@
     "pages/showroom/showroom"
   ],
   "window": {
-    "navigationBarTitleText": "3D 家具展厅",
+    "navigationBarTitleText": "3D 行业案例",
     "navigationBarBackgroundColor": "#fbf8ef",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#fbf8ef"

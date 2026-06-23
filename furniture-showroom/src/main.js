@@ -1,32 +1,51 @@
 import * as pc from "playcanvas";
 import { loadGsplat } from "./gsplat-loader.js";
+import { caseCategories, getCaseCategory } from "./data/case-categories.js";
 import { showroomFurniture } from "./data/furniture.js";
 
 const DEFAULT_FURNITURE_ID = "atelier-low-sofa";
-const orderFurnitureItems = (items = []) => {
-  const defaultItem = items.find((item) => item.id === DEFAULT_FURNITURE_ID);
-  const otherItems = items.filter((item) => item.id !== DEFAULT_FURNITURE_ID);
+const searchParams = new URLSearchParams(window.location.search);
+const isMiniAppPath = /\/miniapp(?:\/|$)/.test(window.location.pathname);
+const requestedMiniappMode = searchParams.get("miniapp") || (isMiniAppPath ? "home" : "");
+const requestedCategoryId = searchParams.get("category") || (requestedMiniappMode ? "toys" : "home");
+let activeCaseCategory = getCaseCategory(requestedCategoryId);
+const getCategoryItems = (category) => (category.id === "home" ? showroomFurniture : category.products || []);
+let rawShowroomItems = getCategoryItems(activeCaseCategory);
+let DEFAULT_ITEM_ID = activeCaseCategory.defaultItemId || rawShowroomItems?.[0]?.id || DEFAULT_FURNITURE_ID;
+const orderFurnitureItems = (items = [], defaultId = DEFAULT_ITEM_ID) => {
+  const defaultItem = items.find((item) => item.id === defaultId);
+  const otherItems = items.filter((item) => item.id !== defaultId);
   return defaultItem ? [defaultItem, ...otherItems] : otherItems;
 };
-const furniture = orderFurnitureItems(showroomFurniture || []);
+let furniture = orderFurnitureItems(rawShowroomItems || []);
 const DEG_TO_RAD = Math.PI / 180;
 const DEFAULT_LANGUAGE = "en";
 const supportedLanguages = new Set(["zh", "en"]);
 const CONTACT_QR_URL = "./images/contact_me_qr.png";
-const searchParams = new URLSearchParams(window.location.search);
-const isMiniAppPath = /\/miniapp(?:\/|$)/.test(window.location.pathname);
-const miniappMode = searchParams.get("miniapp") || (isMiniAppPath ? "home" : "");
+const MINIAPP_CASE_HERO_COPY = {
+  zh: {
+    brand: "MeTop Cases",
+    title: "3D 行业案例",
+    subtitle: "选择一个品类，查看可复用的 3D 样板"
+  },
+  en: {
+    brand: "MeTop Cases",
+    title: "3D Case Library",
+    subtitle: "Browse multi-category 3D samples from one miniapp page"
+  }
+};
+const miniappMode = requestedMiniappMode;
 const isMiniAppHome = miniappMode === "home";
 const isMiniAppGallery = miniappMode === "gallery";
 const isMiniAppMode = isMiniAppHome || isMiniAppGallery;
 const requestedLanguage = searchParams.get("lang");
 const savedLanguage = window.localStorage.getItem("showroom-lang");
 const requestedFurnitureId = searchParams.get("item");
-const hasDefaultFurniture = furniture.some((item) => item.id === DEFAULT_FURNITURE_ID);
+const hasDefaultFurniture = furniture.some((item) => item.id === DEFAULT_ITEM_ID);
 const initialFurnitureId = furniture.some((item) => item.id === requestedFurnitureId)
   ? requestedFurnitureId
   : hasDefaultFurniture
-    ? DEFAULT_FURNITURE_ID
+    ? DEFAULT_ITEM_ID
     : furniture[0]?.id || "";
 const initialLanguage = supportedLanguages.has(requestedLanguage)
   ? requestedLanguage
@@ -52,9 +71,11 @@ const state = {
   cleanView: false,
   measuring: false,
   contactOpen: false,
+  galleryOpen: false,
   measurePoints: [],
   measurePointCounter: 0,
-  toastTimer: null
+  toastTimer: null,
+  categoryScrollFrame: 0
 };
 
 if (isMiniAppHome) {
@@ -68,7 +89,14 @@ const categoryNames = {
     Table: "边几",
     Sofa: "沙发",
     Cabinet: "柜类",
-    Lamp: "灯具"
+    Lamp: "灯具",
+    潮玩: "潮玩",
+    家居: "家居",
+    文创摆件: "文创摆件",
+    鞋包: "鞋包",
+    工业件: "工业件",
+    智能工厂: "智能工厂",
+    空间场景: "空间场景"
   },
   en: {
     All: "All",
@@ -76,7 +104,14 @@ const categoryNames = {
     Table: "Table",
     Sofa: "Sofa",
     Cabinet: "Cabinet",
-    Lamp: "Lamp"
+    Lamp: "Lamp",
+    潮玩: "Toys",
+    家居: "Home",
+    文创摆件: "Decor",
+    鞋包: "Fashion",
+    工业件: "Industrial",
+    智能工厂: "Factory",
+    空间场景: "Space"
   }
 };
 
@@ -753,7 +788,27 @@ const viewer3d = {
 
 const getActiveItem = () => furniture.find((item) => item.id === state.activeId) || furniture[0];
 
-const getCopy = () => pageCopy[state.lang] || pageCopy.zh;
+function getCopy() {
+  const baseCopy = pageCopy[state.lang] || pageCopy.zh;
+  const categoryCopy = activeCaseCategory.page?.[state.lang] || activeCaseCategory.page?.zh || {};
+
+  return {
+    ...baseCopy,
+    ...categoryCopy
+  };
+}
+
+function applyCaseTheme() {
+  const root = document.documentElement;
+  root.style.setProperty("--accent", activeCaseCategory.accent);
+  root.style.setProperty("--accent-strong", activeCaseCategory.accentStrong || activeCaseCategory.accent);
+  root.style.setProperty("--accent-soft", activeCaseCategory.accentSoft || activeCaseCategory.surface);
+  root.style.setProperty("--bg", activeCaseCategory.bg || "#f6f1e8");
+  root.style.setProperty("--bg-soft", activeCaseCategory.surface || "#fbf7ef");
+  root.style.setProperty("--surface-muted", activeCaseCategory.accentSoft || "#efe7da");
+  root.style.setProperty("--line-strong", activeCaseCategory.accentSoft || "#cbbba8");
+  document.body.dataset.caseCategory = activeCaseCategory.id;
+}
 
 function getLocalizedItem(item) {
   return {
@@ -1135,6 +1190,7 @@ function getAnnotations(item) {
 
 function getFurnitureShareUrl(item = getActiveItem()) {
   const url = new URL(window.location.href);
+  url.searchParams.set("category", activeCaseCategory.id);
   url.searchParams.set("item", item.id);
   url.hash = "";
   return url.href;
@@ -1154,9 +1210,188 @@ function getMiniAppUrl(mode, itemId = state.activeId) {
   url.search = "";
   url.hash = "";
   url.searchParams.set("miniapp", mode);
+  url.searchParams.set("category", activeCaseCategory.id);
   url.searchParams.set("item", itemId);
   url.searchParams.set("lang", state.lang);
   return url.href;
+}
+
+function scrollMiniAppCategorySwitch(target, behavior = "auto") {
+  const rail = document.querySelector(".miniapp-category-switch");
+  const activeTarget = target || rail?.querySelector("[data-case-category].active");
+
+  if (!rail || !activeTarget) {
+    return;
+  }
+
+  const maxScroll = Math.max(rail.scrollWidth - rail.clientWidth, 0);
+  const targetCenter = activeTarget.offsetLeft + activeTarget.offsetWidth / 2;
+  const nextScrollLeft = Math.min(Math.max(targetCenter - rail.clientWidth / 2, 0), maxScroll);
+
+  if (behavior !== "smooth") {
+    window.cancelAnimationFrame(state.categoryScrollFrame);
+    rail.scrollLeft = nextScrollLeft;
+    return;
+  }
+
+  const startScrollLeft = rail.scrollLeft;
+  const distance = nextScrollLeft - startScrollLeft;
+
+  if (Math.abs(distance) < 1) {
+    return;
+  }
+
+  window.cancelAnimationFrame(state.categoryScrollFrame);
+
+  let current = startScrollLeft;
+  let velocity = 0;
+  let frame = 0;
+  const stiffness = Math.min(Math.max(Math.abs(distance) / 1800, 0.055), 0.09);
+  const damping = 0.76;
+  const maxFrames = 54;
+
+  const animate = () => {
+    const remaining = nextScrollLeft - current;
+    velocity = (velocity + remaining * stiffness) * damping;
+    current += velocity;
+
+    if (current < 0 || current > maxScroll) {
+      current = Math.min(Math.max(current, 0), maxScroll);
+      velocity *= 0.35;
+    }
+
+    rail.scrollLeft = current;
+    frame += 1;
+
+    if ((Math.abs(remaining) > 0.45 || Math.abs(velocity) > 0.35) && frame < maxFrames) {
+      state.categoryScrollFrame = window.requestAnimationFrame(animate);
+      return;
+    }
+
+    rail.scrollLeft = nextScrollLeft;
+  };
+
+  state.categoryScrollFrame = window.requestAnimationFrame(animate);
+}
+
+function updateMiniAppCategoryTabs(options = {}) {
+  const rail = document.querySelector(".miniapp-category-switch");
+
+  if (!rail) {
+    return;
+  }
+
+  rail.querySelectorAll("[data-case-category]").forEach((tab) => {
+    const isActive = tab.dataset.caseCategory === activeCaseCategory.id;
+    tab.classList.toggle("active", isActive);
+
+    if (isActive) {
+      tab.setAttribute("aria-current", "page");
+    } else {
+      tab.removeAttribute("aria-current");
+    }
+  });
+
+  if (options.scroll) {
+    scrollMiniAppCategorySwitch(rail.querySelector("[data-case-category].active"), options.behavior || "smooth");
+  }
+}
+
+function updateMiniAppContactCopy() {
+  if (!isMiniAppHome) {
+    return;
+  }
+
+  const copy = getCopy();
+  const contactPanel = document.querySelector(".miniapp-contact-panel");
+
+  contactPanel?.querySelector("h2")?.replaceChildren(copy.miniappContactTitle || "添加微信，预约 3D 样板");
+  contactPanel?.querySelector("p")?.replaceChildren(
+    copy.miniappContactHint || "长按识别二维码，发送产品图片或模型文件，我们先帮你判断适合的 3D 展示方式。"
+  );
+  contactPanel?.querySelector("small")?.replaceChildren(copy.miniappContactNote || "建议备注：3D 展示");
+}
+
+const DEFAULT_MINIAPP_BENEFITS = [
+  { title: "细节更清楚", text: "3D 与 2D 视图结合，帮助客户快速理解样板价值" },
+  { title: "案例易复用", text: "同一套展示结构可以覆盖多个品类和多个样板" },
+  { title: "沟通更直接", text: "把产品、卖点和预约动作放在同一个页面里" }
+];
+
+function getMiniAppCaseCopy(item = getActiveItem()) {
+  const copy = getCopy();
+  const benefits = Array.isArray(copy.miniappBenefits) && copy.miniappBenefits.length
+    ? copy.miniappBenefits
+    : DEFAULT_MINIAPP_BENEFITS;
+
+  return {
+    benefits
+  };
+}
+
+function updateMiniAppBenefitCopy(item = getActiveItem()) {
+  if (!isMiniAppHome) {
+    return;
+  }
+
+  const { benefits } = getMiniAppCaseCopy(item);
+
+  document.querySelectorAll(".miniapp-benefit-row").forEach((row, index) => {
+    const benefit = benefits[index] || DEFAULT_MINIAPP_BENEFITS[index] || DEFAULT_MINIAPP_BENEFITS[0];
+    row.querySelector("strong")?.replaceChildren(benefit.title);
+    row.querySelector("small")?.replaceChildren(benefit.text);
+  });
+}
+
+function updateMiniAppCaseHeroCopy() {
+  if (!isMiniAppHome) {
+    return;
+  }
+
+  const hero = document.querySelector(".miniapp-hero-copy");
+  const heroCopy = MINIAPP_CASE_HERO_COPY[state.lang] || MINIAPP_CASE_HERO_COPY.zh;
+
+  if (!hero) {
+    return;
+  }
+
+  const [brand, title, subtitle] = hero.children;
+  if (brand) brand.textContent = heroCopy.brand;
+  if (title) title.textContent = heroCopy.title;
+  if (subtitle) subtitle.textContent = heroCopy.subtitle;
+}
+
+function setActiveCaseCategory(categoryId) {
+  const nextCategory = getCaseCategory(categoryId);
+
+  if (!nextCategory || nextCategory.id === activeCaseCategory.id) {
+    updateMiniAppCategoryTabs();
+    return;
+  }
+
+  const applyNextCategory = () => {
+    activeCaseCategory = nextCategory;
+    rawShowroomItems = getCategoryItems(activeCaseCategory);
+    DEFAULT_ITEM_ID = activeCaseCategory.defaultItemId || rawShowroomItems?.[0]?.id || DEFAULT_FURNITURE_ID;
+    furniture = orderFurnitureItems(rawShowroomItems || [], DEFAULT_ITEM_ID);
+    state.activeId = furniture[0]?.id || "";
+    state.activeFilter = "All";
+    state.zoomed = false;
+    state.activeViewPreset = "free";
+    state.activeAnnotation = "";
+    state.focusAnchor = null;
+    state.measurePoints = [];
+    state.saved = false;
+
+    applyCaseTheme();
+    updateMiniAppCategoryTabs();
+    updateMiniAppContactCopy();
+    applyLanguageContent();
+    renderFilters();
+    updateSelectedItem(state.activeId);
+  };
+
+  applyNextCategory();
 }
 
 function getFullShowroomUrl(target = "") {
@@ -1164,6 +1399,7 @@ function getFullShowroomUrl(target = "") {
   url.pathname = "/";
   url.search = "";
   url.hash = target;
+  url.searchParams.set("category", activeCaseCategory.id);
   url.searchParams.set("item", state.activeId);
   return url.href;
 }
@@ -1173,6 +1409,8 @@ function setupMiniAppHomeShell() {
     return;
   }
 
+  const copy = getCopy();
+  const heroCopy = MINIAPP_CASE_HERO_COPY[state.lang] || MINIAPP_CASE_HERO_COPY.zh;
   document.body.classList.add("miniapp-mode", "miniapp-home-mode");
   viewerPanel?.insertAdjacentHTML(
     "afterbegin",
@@ -1180,13 +1418,35 @@ function setupMiniAppHomeShell() {
       <section class="miniapp-hero-header" id="miniappHeroHeader">
         <span class="miniapp-hero-mark" aria-hidden="true">M</span>
         <div class="miniapp-hero-copy">
-          <span>MeTop Furniture Lab</span>
-          <strong>3D 家具展厅</strong>
-          <p>让客户 360° 了解你的产品</p>
+          <span>${escapeHtml(heroCopy.brand)}</span>
+          <strong>${escapeHtml(heroCopy.title)}</strong>
+          <p>${escapeHtml(heroCopy.subtitle)}</p>
         </div>
       </section>
+      <nav class="miniapp-category-switch" aria-label="切换案例品类">
+        ${caseCategories
+          .map((category) => {
+            const isActive = category.id === activeCaseCategory.id;
+
+            return `
+              <button
+                class="${isActive ? "active" : ""}"
+                type="button"
+                role="tab"
+                data-case-category="${escapeHtml(category.id)}"
+                style="--category-accent: ${escapeHtml(category.accent)}; --category-surface: ${escapeHtml(category.surface || category.bg)};"
+                ${isActive ? 'aria-current="page"' : ""}
+              >
+                <span aria-hidden="true"></span>
+                <strong>${escapeHtml(category.shortName || category.name)}</strong>
+              </button>
+            `;
+          })
+          .join("")}
+      </nav>
     `
   );
+  requestAnimationFrame(() => scrollMiniAppCategorySwitch());
 
   const viewerCopy = viewerPanel?.querySelector(".viewer-copy");
 
@@ -1194,13 +1454,21 @@ function setupMiniAppHomeShell() {
     const showcaseCard = document.createElement("section");
     showcaseCard.className = "miniapp-showcase-card";
     showcaseCard.id = "miniappShowcaseCard";
-    showcaseCard.setAttribute("aria-label", "当前家具 3D 展示");
+    showcaseCard.setAttribute("aria-label", "当前案例 3D 展示");
     viewerPanel.insertBefore(showcaseCard, viewerCopy);
     showcaseCard.appendChild(viewerCopy);
     showcaseCard.appendChild(modelStage);
     showcaseCard.insertAdjacentHTML(
       "afterbegin",
-      `<button class="miniapp-view-toggle miniapp-card-toggle" type="button" id="miniappViewToggle">2D 展示</button>`
+      `<div class="miniapp-showcase-controls" aria-label="展示控制">
+        <div class="miniapp-view-switch" role="group" aria-label="展示模式切换">
+          <button class="active" type="button" data-view-mode="grid" aria-label="查看 3D 案例" title="查看 3D 案例" aria-pressed="true">3D</button>
+          <button type="button" data-view-mode="product" aria-label="查看案例图" title="查看案例图" aria-pressed="false">2D</button>
+        </div>
+        <button class="miniapp-rotate-toggle active" type="button" id="miniappRotateToggle" data-control="rotate" aria-label="暂停自动旋转" aria-pressed="true">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>`
     );
   }
 
@@ -1215,7 +1483,7 @@ function setupMiniAppHomeShell() {
             <path d="m12 12 8-4.5"></path>
             <path d="M12 12v9"></path>
           </svg>
-          <span>进入展厅</span>
+          <span>查看案例</span>
         </button>
         <button class="miniapp-secondary-action" type="button" id="miniappSampleButton">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1229,7 +1497,7 @@ function setupMiniAppHomeShell() {
         </button>
       </div>
 
-      <section class="miniapp-benefit-list" aria-label="3D 家具展厅能力">
+      <section class="miniapp-benefit-list" aria-label="3D 案例展示能力">
         <article class="miniapp-benefit-row">
           <span class="miniapp-benefit-icon">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1241,8 +1509,8 @@ function setupMiniAppHomeShell() {
             </svg>
           </span>
           <span>
-            <strong>360° 看清体量</strong>
-            <small>旋转、缩放、标尺，真实还原尺寸与结构</small>
+            <strong>360° 看清细节</strong>
+            <small>旋转、缩放、标尺，真实还原外观与结构</small>
           </span>
           <i aria-hidden="true">›</i>
         </article>
@@ -1258,7 +1526,7 @@ function setupMiniAppHomeShell() {
           </span>
           <span>
             <strong>销售一键分享</strong>
-            <small>生成链接或海报，客户轻松查看与转发</small>
+            <small>生成链接或页面，客户轻松查看与转发</small>
           </span>
           <i aria-hidden="true">›</i>
         </article>
@@ -1270,15 +1538,15 @@ function setupMiniAppHomeShell() {
             </svg>
           </span>
           <span>
-            <strong>减少退货沟通</strong>
-            <small>提前展示材质与细节，减少预期差异</small>
+            <strong>减少来回沟通</strong>
+            <small>提前展示材质、尺度与卖点，减少预期差异</small>
           </span>
           <i aria-hidden="true">›</i>
         </article>
       </section>
 
       <section class="miniapp-workflow-card" aria-label="3 步快速生成展厅">
-        <h2><span></span>3 步快速生成展厅<span></span></h2>
+        <h2><span></span>3 步生成展示页<span></span></h2>
         <div class="miniapp-workflow-steps">
           <article>
             <span>
@@ -1311,20 +1579,20 @@ function setupMiniAppHomeShell() {
                 <path d="M17 12c0 3.3-2.2 6-5 6"></path>
               </svg>
             </span>
-            <strong>小程序展示</strong>
-            <small>3D 展厅 / 分享 / 留资</small>
+            <strong>案例页展示</strong>
+            <small>3D 样板 / 分享 / 留资</small>
           </article>
         </div>
       </section>
 
       <nav class="miniapp-tabbar" aria-label="小程序底部导航">
-        <a class="active" href="${escapeHtml(getMiniAppUrl("home"))}">
+        <button class="active" type="button" id="miniappHomeTab">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="m4 11 8-7 8 7"></path>
             <path d="M6 10v10h12V10"></path>
           </svg>
           <span>首页</span>
-        </a>
+        </button>
         <button type="button" id="miniappContactTab">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="8" r="4"></circle>
@@ -1334,14 +1602,29 @@ function setupMiniAppHomeShell() {
         </button>
       </nav>
 
+      <div class="miniapp-gallery-sheet" id="miniappGallerySheet" aria-hidden="true">
+        <button class="miniapp-gallery-backdrop" type="button" id="miniappGalleryBackdrop" aria-label="关闭案例列表"></button>
+        <main class="miniapp-gallery-shell" aria-label="案例列表">
+          <header class="miniapp-gallery-header">
+            <button class="miniapp-back-button" type="button" id="miniappGalleryBack">返回</button>
+            <div>
+              <span>MeTop Cases</span>
+              <h1 id="miniappGalleryTitle"></h1>
+              <p id="miniappGallerySubtitle"></p>
+            </div>
+          </header>
+          <section class="miniapp-card-grid" id="miniappGalleryGrid" aria-label="案例模型列表"></section>
+        </main>
+      </div>
+
       <div class="miniapp-contact-sheet" id="miniappContactSheet" aria-hidden="true">
         <button class="miniapp-contact-backdrop" type="button" id="miniappContactBackdrop" aria-label="关闭二维码"></button>
         <section class="miniapp-contact-panel" role="dialog" aria-modal="true" aria-labelledby="miniappContactTitle">
           <button class="miniapp-contact-close" type="button" id="miniappContactClose" aria-label="关闭">×</button>
-          <h2 id="miniappContactTitle">添加微信，预约 3D 家具样板</h2>
-          <p>长按识别二维码，发送家具图片或模型文件，我们先帮你判断适合的 3D 展示方式。</p>
+          <h2 id="miniappContactTitle">${escapeHtml(copy.miniappContactTitle || "添加微信，预约 3D 样板")}</h2>
+          <p>${escapeHtml(copy.miniappContactHint || "长按识别二维码，发送产品图片或模型文件，我们先帮你判断适合的 3D 展示方式。")}</p>
           <img src="${CONTACT_QR_URL}" alt="微信联系二维码">
-          <small>建议备注：3D 家具展厅</small>
+          <small>${escapeHtml(copy.miniappContactNote || "建议备注：3D 展示")}</small>
         </section>
       </div>
     `
@@ -1354,14 +1637,16 @@ function updateMiniAppHomeShell(item = getActiveItem()) {
   }
 
   const localizedItem = getLocalizedItem(item);
-  const toggle = document.getElementById("miniappViewToggle");
+  const currentLabel = document.getElementById("eraLabel");
   const title = document.getElementById("showroomTitle");
   const styleLine = document.getElementById("styleLine");
+  const description = document.getElementById("showroomDescription");
 
-  if (toggle) {
-    const label = state.viewMode === "product" ? "3D 展示" : "2D 展示";
-    toggle.textContent = label;
-    toggle.setAttribute("aria-label", label);
+  document.title = `MeTop Cases | ${localizedItem.title}`;
+  document.querySelector("meta[name='description']")?.setAttribute("content", localizedItem.description);
+
+  if (currentLabel) {
+    currentLabel.textContent = item.era;
   }
 
   if (title) {
@@ -1371,6 +1656,96 @@ function updateMiniAppHomeShell(item = getActiveItem()) {
   if (styleLine) {
     styleLine.textContent = localizedItem.style;
   }
+
+  if (description) {
+    description.textContent = localizedItem.description;
+  }
+
+  updateMiniAppBenefitCopy(item);
+}
+
+function getMiniAppGalleryCopy() {
+  const copy = getCopy();
+  const title =
+    copy.miniappGalleryTitle ||
+    (state.lang === "en" ? `Select a ${activeCaseCategory.shortName} sample` : `选择一个${activeCaseCategory.shortName}样板`);
+  const subtitle =
+    copy.miniappGallerySubtitle ||
+    (state.lang === "en"
+      ? "Tap any card to return to the home view with that sample loaded."
+      : "点击任意卡片切换为当前展示样板。");
+
+  return { title, subtitle };
+}
+
+function renderMiniAppGallerySheet() {
+  if (!isMiniAppHome) {
+    return;
+  }
+
+  const title = document.getElementById("miniappGalleryTitle");
+  const subtitle = document.getElementById("miniappGallerySubtitle");
+  const grid = document.getElementById("miniappGalleryGrid");
+  const activeItem = getActiveItem();
+  const galleryCopy = getMiniAppGalleryCopy();
+
+  if (title) title.textContent = galleryCopy.title;
+  if (subtitle) subtitle.textContent = galleryCopy.subtitle;
+
+  if (!grid) {
+    return;
+  }
+
+  grid.innerHTML = furniture
+    .map((item) => {
+      const localizedItem = getLocalizedItem(item);
+      const dimensions = getMeasurementMetrics(localizedItem);
+
+      return `
+        <button class="miniapp-furniture-card ${item.id === activeItem.id ? "active" : ""}" type="button" data-gallery-id="${escapeHtml(item.id)}">
+          <span class="miniapp-card-image">
+            <img src="${escapeHtml(item.image)}" alt="${escapeHtml(localizedItem.title)}" loading="lazy">
+          </span>
+          <span class="miniapp-card-copy">
+            <span class="miniapp-card-kicker">${escapeHtml(localizedItem.category)} · ${escapeHtml(item.era)}</span>
+            <strong>${escapeHtml(localizedItem.title)}</strong>
+            <small>${escapeHtml(localizedItem.style)}</small>
+          </span>
+          <span class="miniapp-card-specs">
+            <span>W ${Math.round(dimensions.x)} cm</span>
+            <span>D ${Math.round(dimensions.z)} cm</span>
+            <span>H ${Math.round(dimensions.y)} cm</span>
+          </span>
+        </button>
+      `;
+    })
+    .join("");
+
+  grid.querySelectorAll("[data-gallery-id]").forEach((card) => {
+    card.addEventListener("click", () => {
+      updateSelectedItem(card.dataset.galleryId);
+      setMiniAppGallerySheet(false);
+    });
+  });
+}
+
+function setMiniAppGallerySheet(isOpen) {
+  if (!isMiniAppHome) {
+    return;
+  }
+
+  state.galleryOpen = isOpen;
+  const sheet = document.getElementById("miniappGallerySheet");
+
+  if (isOpen) {
+    renderMiniAppGallerySheet();
+    furniture.forEach((item) => prefetch3DModel(item.viewerModel?.url));
+    setMiniAppContactSheet(false);
+  }
+
+  sheet?.classList.toggle("open", isOpen);
+  sheet?.setAttribute("aria-hidden", String(!isOpen));
+  document.body.classList.toggle("miniapp-gallery-open", isOpen);
 }
 
 function setMiniAppContactSheet(isOpen) {
@@ -1380,6 +1755,11 @@ function setMiniAppContactSheet(isOpen) {
 
   state.contactOpen = isOpen;
   const sheet = document.getElementById("miniappContactSheet");
+
+  if (isOpen) {
+    setMiniAppGallerySheet(false);
+  }
+
   sheet?.classList.toggle("open", isOpen);
   sheet?.setAttribute("aria-hidden", String(!isOpen));
   document.body.classList.toggle("miniapp-contact-open", isOpen);
@@ -1390,12 +1770,32 @@ function bindMiniAppHomeEvents() {
     return;
   }
 
-  document.getElementById("miniappViewToggle")?.addEventListener("click", () => {
-    setViewMode(state.viewMode === "product" ? "grid" : "product");
+  const categoryRail = document.querySelector(".miniapp-category-switch");
+  const categoryLinks = [...(categoryRail?.querySelectorAll("[data-case-category]") || [])];
+  categoryLinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      if (link.classList.contains("active")) {
+        scrollMiniAppCategorySwitch(link, "smooth");
+        return;
+      }
+
+      scrollMiniAppCategorySwitch(link, "smooth");
+      setActiveCaseCategory(link.dataset.caseCategory);
+    });
   });
 
   document.getElementById("miniappGalleryButton")?.addEventListener("click", () => {
-    window.location.href = getMiniAppUrl("gallery");
+    setMiniAppGallerySheet(true);
+  });
+
+  document.getElementById("miniappGalleryBack")?.addEventListener("click", () => {
+    setMiniAppGallerySheet(false);
+  });
+
+  document.getElementById("miniappGalleryBackdrop")?.addEventListener("click", () => {
+    setMiniAppGallerySheet(false);
   });
 
   document.getElementById("miniappSampleButton")?.addEventListener("click", () => {
@@ -1417,15 +1817,20 @@ function bindMiniAppHomeEvents() {
 
 function initMiniAppGallery() {
   document.body.className = "miniapp-mode miniapp-gallery-mode";
+  document.body.dataset.caseCategory = activeCaseCategory.id;
   const activeItem = getActiveItem();
-  const copyTitle = state.lang === "en" ? "Select a furniture model" : "选择一件家具进入 3D 展示";
+  const copy = getCopy();
+  const copyTitle =
+    copy.miniappGalleryTitle ||
+    (state.lang === "en" ? `Select a ${activeCaseCategory.shortName} sample` : `选择一个${activeCaseCategory.shortName}样板`);
   const copySubtitle =
-    state.lang === "en"
-      ? "Tap any card to return to the home view with that model loaded."
-      : "点击任意卡片回到首页，并直接切换为当前家具的 3D 模型。";
+    copy.miniappGallerySubtitle ||
+    (state.lang === "en"
+      ? "Tap any card to return to the home view with that sample loaded."
+      : "点击任意卡片回到首页，并直接切换为当前展示样板。");
 
   document.documentElement.lang = state.lang === "en" ? "en" : "zh-CN";
-  document.title = state.lang === "en" ? "Furniture Showroom Gallery" : "实景 3D 家具展厅";
+  document.title = copyTitle;
   document.body.innerHTML = `
     <main class="miniapp-gallery-shell">
       <header class="miniapp-gallery-header">
@@ -2073,17 +2478,39 @@ function syncControlButtons() {
     const isActive = button.dataset.viewMode === state.viewMode;
     button.classList.toggle("active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
+
+    if (button.closest(".miniapp-view-switch")) {
+      const is3dCaseMode = button.dataset.viewMode === "grid";
+      const label = is3dCaseMode ? "查看 3D 案例" : "查看案例图";
+      button.setAttribute("aria-label", label);
+      button.title = label;
+    }
   });
 
   document.querySelectorAll("[data-control]").forEach((button) => {
     const control = button.dataset.control;
+    const isMiniAppRotate = button.id === "miniappRotateToggle";
+    const rotateDisabled = isMiniAppRotate && state.viewMode === "product";
     const isActive =
       (control === "rotate" && state.rotating) ||
       (control === "zoom" && state.zoomed) ||
       (control === "fullscreen" && state.immersive) ||
       (control === "clean" && state.cleanView) ||
       (control === "measure" && state.measuring);
-    button.classList.toggle("active", isActive);
+    const isPressed = isActive && !rotateDisabled;
+
+    button.classList.toggle("active", isPressed);
+    button.setAttribute("aria-pressed", String(isPressed));
+
+    if (isMiniAppRotate) {
+      button.disabled = rotateDisabled;
+      button.classList.toggle("is-paused", !isPressed);
+      button.setAttribute(
+        "aria-label",
+        rotateDisabled ? "2D 模式不可自动旋转" : state.rotating ? "暂停自动旋转" : "开启自动旋转"
+      );
+      button.title = rotateDisabled ? "2D 模式不可自动旋转" : state.rotating ? "暂停自动旋转" : "开启自动旋转";
+    }
   });
 
   document.querySelectorAll("[data-view-preset]").forEach((button) => {
@@ -2486,13 +2913,15 @@ function renderCategoryList() {
     .map(
       (item) => {
         const localizedItem = getLocalizedItem(item);
+        const primaryLabel = activeCaseCategory.id === "home" ? localizedItem.category : localizedItem.title;
+        const secondaryLabel = activeCaseCategory.id === "home" ? localizedItem.countLabel : localizedItem.style;
 
         return `
         <button class="category-item ${item.id === state.activeId ? "active" : ""}" type="button" data-id="${item.id}">
           <span class="category-thumb"><img src="${item.image}" alt="${localizedItem.title}" loading="lazy"></span>
           <span>
-            <span class="category-name">${localizedItem.category}</span>
-            <span class="category-count">${localizedItem.countLabel}</span>
+            <span class="category-name">${primaryLabel}</span>
+            <span class="category-count">${secondaryLabel}</span>
           </span>
           <span class="category-arrow" aria-hidden="true">›</span>
         </button>
@@ -2773,6 +3202,7 @@ function applyLanguageContent() {
   document.documentElement.lang = copy.htmlLang;
   document.title = copy.title;
   document.querySelector("meta[name='description']")?.setAttribute("content", copy.description);
+  updateMiniAppCaseHeroCopy();
 
   [
     "brandTagline",
@@ -3249,6 +3679,10 @@ function bindEvents() {
       const control = button.dataset.control;
 
       if (control === "rotate") {
+        if (state.viewMode === "product") {
+          return;
+        }
+
         state.rotating = !state.rotating;
         state.activeViewPreset = state.rotating ? "free" : state.activeViewPreset;
       }
@@ -3355,6 +3789,8 @@ function bindTooltipEvents() {
 }
 
 function init() {
+  applyCaseTheme();
+
   if (!furniture.length) {
     document.body.innerHTML = "<main class='empty-state'>No showroom furniture data found.</main>";
     return;

@@ -1,36 +1,31 @@
 const DEFAULT_SHOWROOM_URL = "https://furniture.metop.com.cn/miniapp/";
-const DEFAULT_ITEM = "atelier-low-sofa";
 
-function buildMiniappHomeUrl(options = {}) {
+function getMiniappCaseUrl() {
   const app = getApp();
-  const baseUrl = app?.globalData?.showroomUrl || DEFAULT_SHOWROOM_URL;
-  const item = options.item || DEFAULT_ITEM;
-  const separator = baseUrl.includes("?") ? "&" : "?";
-
-  return `${baseUrl}${separator}miniapp=home&item=${encodeURIComponent(item)}&lang=zh`;
+  return app?.globalData?.showroomUrl || DEFAULT_SHOWROOM_URL;
 }
 
 Page({
   data: {
-    homeUrl: buildMiniappHomeUrl()
+    homeUrl: getMiniappCaseUrl()
   },
 
-  onLoad(options) {
+  onLoad() {
     this.setData({
-      homeUrl: buildMiniappHomeUrl(options)
+      homeUrl: getMiniappCaseUrl()
     });
   },
 
   onShareAppMessage() {
     return {
-      title: "实景 3D 家具展厅，在线看清家具体量",
+      title: "3D 行业案例展厅，在线查看多品类样板",
       path: "/pages/index/index"
     };
   },
 
   onShareTimeline() {
     return {
-      title: "实景 3D 家具展厅，在线看清家具体量"
+      title: "3D 行业案例展厅，在线查看多品类样板"
     };
   }
 });
