@@ -34,6 +34,79 @@ const MINIAPP_CASE_HERO_COPY = {
     subtitle: "Browse multi-category 3D samples from one miniapp page"
   }
 };
+const WEB_CASE_HERO_IMAGE = "./images/case-library-hero.png";
+const WEB_CASE_COPY = {
+  home: {
+    name: "家具",
+    title: "家具 3D 展示案例库",
+    subtitle: "把尺寸、材质和空间感做成可分享的在线样板。",
+    audience: "家具品牌 / 展厅 / 电商详情页",
+    problem: "客户看不清体量、材质和摆放关系，销售需要反复解释。",
+    outcome: "用 3D 样板把产品讲清楚，让客户自己旋转、缩放、确认细节。",
+    metric: "5 个家具样板",
+    conversion: "适合官网案例、招商资料、门店导购和私域转发。"
+  },
+  toys: {
+    name: "潮玩",
+    title: "潮玩 3D 展示案例库",
+    subtitle: "让涂装、姿态、底座和收藏细节被客户看见。",
+    audience: "手办 / 盲盒 / IP 周边",
+    problem: "限量款价值集中在细节里，平面图很难讲清收藏感。",
+    outcome: "用统一视角展示系列角色，适合新品预热和社媒传播。",
+    metric: "3 个潮玩样板",
+    conversion: "适合新品预售、IP 活动页、社群传播和收藏级详情页。"
+  },
+  decor: {
+    name: "文创",
+    title: "文创摆件 3D 展示案例库",
+    subtitle: "让小件商品也能讲清纹样、釉面和设计感。",
+    audience: "摆件 / 器物 / 礼品 / 联名周边",
+    problem: "小件商品细节密度高，照片容易丢失曲面和工艺质感。",
+    outcome: "把器物轮廓、纹样连续性和材质反光集中在一个案例页里。",
+    metric: "3 个文创样板",
+    conversion: "适合文博周边、联名礼品、活动专题和线下展陈延展。"
+  },
+  fashion: {
+    name: "鞋包",
+    title: "鞋包精品 3D 展示案例库",
+    subtitle: "把包型、走线、鞋底和五金细节变成购买理由。",
+    audience: "包袋 / 鞋履 / 腕表 / 配饰",
+    problem: "用户想看廓形、侧面比例、五金和材质反光，普通图组不够直观。",
+    outcome: "用可旋转样板补足质感判断，适合精品 Lookbook 和买手店页面。",
+    metric: "3 个鞋包样板",
+    conversion: "适合新品 Lookbook、买手店页面、直播讲解和多 SKU 统一展示。"
+  },
+  industry: {
+    name: "工业",
+    title: "工业件 3D 展示案例库",
+    subtitle: "把结构、接口、外壳比例和技术卖点讲清楚。",
+    audience: "设备外壳 / 机械部件 / 无人机 / 精密零件",
+    problem: "复杂结构靠几张图讲不清，售前沟通容易反复索要细节图。",
+    outcome: "把接口、连接位和结构比例变成可在线确认的技术展示资产。",
+    metric: "3 个工业样板",
+    conversion: "适合技术目录、投标方案、渠道培训和售前远程讲解。"
+  },
+  factory: {
+    name: "工厂",
+    title: "智能工厂 3D 展示案例库",
+    subtitle: "让产线节点、设备关系和参观路线一屏看懂。",
+    audience: "产线 / 设备 / 园区 / 工厂展厅",
+    problem: "工厂价值不只在单台设备，而在流程、空间和节点关系。",
+    outcome: "用 3D 场景支持招商、汇报、远程参观和方案讲解。",
+    metric: "3 个工厂样板",
+    conversion: "适合招商路演、园区汇报、远程参观和客户接待前置沟通。"
+  },
+  space: {
+    name: "空间",
+    title: "空间场景 3D 展示案例库",
+    subtitle: "让客户先在线进入房间、展厅或街区现场。",
+    audience: "酒店 / 展馆 / 商业空间 / 文旅街区",
+    problem: "空间体验靠照片很难建立尺度感和动线感。",
+    outcome: "把真实尺度、路线和重点点位放到一个可进入的在线案例里。",
+    metric: "3 个空间样板",
+    conversion: "适合看房看场、展馆导览、文旅招商和商业空间预约。"
+  }
+};
 const miniappMode = requestedMiniappMode;
 const isMiniAppHome = miniappMode === "home";
 const isMiniAppGallery = miniappMode === "gallery";
@@ -3788,8 +3861,295 @@ function bindTooltipEvents() {
   });
 }
 
+function getWebCategoryCopy(category = activeCaseCategory) {
+  return WEB_CASE_COPY[category.id] || WEB_CASE_COPY.home;
+}
+
+function getWebCategoryUrl(categoryId) {
+  return `./?category=${encodeURIComponent(categoryId)}&lang=${encodeURIComponent(state.lang)}`;
+}
+
+function getWebHomeUrl() {
+  return `./?lang=${encodeURIComponent(state.lang)}`;
+}
+
+function getWebCategoryItems(category) {
+  return orderFurnitureItems(getCategoryItems(category), category.defaultItemId);
+}
+
+function renderWebInsightCards(category) {
+  const insights = category.insights?.length
+    ? category.insights
+    : [
+        { title: "3D 样板", text: "保留产品细节、体量关系和可交互展示。" },
+        { title: "商业页面", text: "把样板组织成客户能看懂的行业案例。" },
+        { title: "多端复用", text: "同一套内容可进入官网、小程序和销售资料。" }
+      ];
+
+  return insights
+    .map(
+      (insight) => `
+        <article class="web-category-insight">
+          <strong>${escapeHtml(insight.title)}</strong>
+          <span>${escapeHtml(insight.text)}</span>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderWebTopbar(activeCategoryId = "") {
+  const navItems = caseCategories
+    .map((category) => {
+      const copy = getWebCategoryCopy(category);
+      return `
+        <a class="${category.id === activeCategoryId ? "active" : ""}" href="${escapeHtml(getWebCategoryUrl(category.id))}">
+          ${escapeHtml(copy.name)}
+        </a>
+      `;
+    })
+    .join("");
+
+  return `
+    <header class="web-case-topbar">
+      <a class="web-case-brand" href="${escapeHtml(getWebHomeUrl())}" aria-label="MeTop Cases 首页">
+        <span>MetaST</span>
+        <strong>Cases</strong>
+      </a>
+      <nav class="web-case-nav" aria-label="行业案例分类">${navItems}</nav>
+      <a class="web-case-top-cta" href="${escapeHtml(getWebCategoryUrl(activeCategoryId || "industry"))}">查看案例库</a>
+    </header>
+  `;
+}
+
+function renderWebHomePage() {
+  document.body.className = "web-case-library web-case-home";
+  document.body.dataset.caseCategory = "library";
+  document.documentElement.style.setProperty("--accent", "#1d48ce");
+  document.documentElement.style.setProperty("--accent-strong", "#12308f");
+  document.documentElement.style.setProperty("--accent-soft", "#dfe8ff");
+  document.title = "MeTop Cases | 3D 行业案例库";
+  document.querySelector("meta[name='description']")?.setAttribute(
+    "content",
+    "面向家具、潮玩、文创、鞋包、工业件、智能工厂和空间场景的 3D 行业案例库。"
+  );
+
+  const categoryCards = caseCategories
+    .map((category, index) => {
+      const copy = getWebCategoryCopy(category);
+      const items = getWebCategoryItems(category);
+      const leadItem = getLocalizedItem(items[0] || {});
+      return `
+        <a class="web-case-category-card" href="${escapeHtml(getWebCategoryUrl(category.id))}" style="--case-accent: ${escapeHtml(category.accent)}">
+          <span class="web-case-card-index">${String(index + 1).padStart(2, "0")}</span>
+          <strong>${escapeHtml(copy.name)}</strong>
+          <small>${escapeHtml(copy.subtitle)}</small>
+          <b>代表样板：${escapeHtml(leadItem.title || copy.name)}</b>
+          <em>${escapeHtml(copy.metric)}</em>
+          <img src="${escapeHtml(leadItem.image || WEB_CASE_HERO_IMAGE)}" alt="${escapeHtml(copy.name)}案例样板" loading="lazy">
+        </a>
+      `;
+    })
+    .join("");
+
+  document.body.innerHTML = `
+    ${renderWebTopbar()}
+    <main class="web-case-site">
+      <section class="web-case-hero" aria-label="3D 行业案例库">
+        <img class="web-case-hero-image" src="${WEB_CASE_HERO_IMAGE}" alt="多行业 3D 案例库视觉图">
+        <div class="web-case-hero-overlay" aria-hidden="true"></div>
+        <div class="web-case-hero-copy">
+          <span class="web-case-kicker">3D INDUSTRY CASE LIBRARY</span>
+          <h1>让每个行业，都有一套能成交的 3D 案例库</h1>
+          <p>从商品到空间，从销售资料到官网页面，把可旋转、可分享、可复用的 3D 样板做成真正商业化的行业入口。</p>
+          <div class="web-case-hero-actions">
+            <a href="${escapeHtml(getWebCategoryUrl("industry"))}">进入行业案例库</a>
+            <a href="#webCaseCategories">浏览全部品类</a>
+          </div>
+        </div>
+        <div class="web-case-hero-panel" aria-label="案例库能力">
+          <span>CASE OPERATING SYSTEM</span>
+          <strong>行业入口 / 代表样板 / 转化动作</strong>
+          <p>一张首页承接多品类，一页一个行业案例，最终回到可体验的 3D/2D 样板。</p>
+        </div>
+      </section>
+
+      <section class="web-case-proof" aria-label="案例库价值">
+        <article>
+          <strong>7</strong>
+          <span>行业品类</span>
+        </article>
+        <article>
+          <strong>23+</strong>
+          <span>可复用样板</span>
+        </article>
+        <article>
+          <strong>3D/2D</strong>
+          <span>统一展示框架</span>
+        </article>
+      </section>
+
+      <section class="web-case-section" id="webCaseCategories" aria-labelledby="webCaseCategoryTitle">
+        <div class="web-case-section-head">
+          <span>Case Categories</span>
+          <h2 id="webCaseCategoryTitle">按行业进入案例页面</h2>
+          <p>每个品类都是独立页面，围绕行业痛点、展示价值和样板资产组织，而不是简单堆产品图。</p>
+        </div>
+        <div class="web-case-category-grid">${categoryCards}</div>
+      </section>
+
+      <section class="web-case-operating" aria-label="案例库商业路径">
+        <div class="web-case-operating-head">
+          <span>Sales Flow</span>
+          <h2>从一件样板，变成客户愿意继续沟通的行业案例</h2>
+        </div>
+        <div class="web-case-operating-grid">
+          <article><b>01</b><strong>行业痛点</strong><span>先告诉客户为什么这个行业需要 3D，而不是直接丢模型。</span></article>
+          <article><b>02</b><strong>代表产品</strong><span>用真实产品图和 3D 样板做证明，降低理解成本。</span></article>
+          <article><b>03</b><strong>能力复用</strong><span>同一套结构可迁移到官网、小程序、招商资料和销售链接。</span></article>
+          <article><b>04</b><strong>行动入口</strong><span>每个行业页都能进入移动端案例，方便转发和现场演示。</span></article>
+        </div>
+      </section>
+
+      <section class="web-case-commercial">
+        <div>
+          <span>Commercial structure</span>
+          <h2>不是产品列表，是销售能直接发给客户的案例资产</h2>
+        </div>
+        <ol>
+          <li><strong>行业场景</strong><span>先讲客户为什么需要 3D 展示</span></li>
+          <li><strong>代表样板</strong><span>用真实商品或场景做可视化证明</span></li>
+          <li><strong>转化动作</strong><span>预约样板、咨询方案、复用到官网和小程序</span></li>
+        </ol>
+      </section>
+    </main>
+  `;
+}
+
+function renderWebCategoryPage(category) {
+  const copy = getWebCategoryCopy(category);
+  const items = getWebCategoryItems(category);
+  const leadItem = getLocalizedItem(items[0] || {});
+  const leadDimensions = getMeasurementMetrics(leadItem);
+  const insightCards = renderWebInsightCards(category);
+  const itemCards = items
+    .map((item) => {
+      const localizedItem = getLocalizedItem(item);
+      const dimensions = getMeasurementMetrics(localizedItem);
+      return `
+        <article class="web-case-sample">
+          <img src="${escapeHtml(localizedItem.image)}" alt="${escapeHtml(localizedItem.title)}" loading="lazy">
+          <div>
+            <span>${escapeHtml(localizedItem.category)} · ${escapeHtml(item.era)}</span>
+            <h3>${escapeHtml(localizedItem.title)}</h3>
+            <p>${escapeHtml(localizedItem.style)}</p>
+            <small>W ${Math.round(dimensions.x)} cm / D ${Math.round(dimensions.z)} cm / H ${Math.round(dimensions.y)} cm</small>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+  const switcher = caseCategories
+    .map((entry) => {
+      const entryCopy = getWebCategoryCopy(entry);
+      return `
+        <a class="${entry.id === category.id ? "active" : ""}" href="${escapeHtml(getWebCategoryUrl(entry.id))}">
+          ${escapeHtml(entryCopy.name)}
+        </a>
+      `;
+    })
+    .join("");
+
+  applyCaseTheme();
+  document.body.className = "web-case-library web-case-detail";
+  document.body.dataset.caseCategory = category.id;
+  document.title = `MeTop Cases | ${copy.name}案例库`;
+  document.querySelector("meta[name='description']")?.setAttribute("content", copy.subtitle);
+  document.body.innerHTML = `
+    ${renderWebTopbar(category.id)}
+    <main class="web-case-site">
+      <section class="web-category-hero" style="--case-accent: ${escapeHtml(category.accent)}" aria-labelledby="webCategoryTitle">
+        <div class="web-category-copy">
+          <a class="web-case-back" href="${escapeHtml(getWebHomeUrl())}">返回行业案例库</a>
+          <span>${escapeHtml(copy.audience)}</span>
+          <h1 id="webCategoryTitle">${escapeHtml(copy.name)}案例库：${escapeHtml(leadItem.title || copy.name)}</h1>
+          <p>${escapeHtml(copy.subtitle)}</p>
+          <div class="web-category-proofline">
+            <strong>${escapeHtml(copy.metric)}</strong>
+            <strong>${escapeHtml(copy.conversion)}</strong>
+          </div>
+          <div class="web-category-actions">
+            <a href="#webCategorySamples">查看样板</a>
+            <a href="./miniapp?category=${escapeHtml(category.id)}&item=${escapeHtml(items[0]?.id || "")}&lang=zh">打开小程序预览</a>
+          </div>
+        </div>
+        <div class="web-category-visual">
+          <img src="${escapeHtml(leadItem.image || WEB_CASE_HERO_IMAGE)}" alt="${escapeHtml(leadItem.title || copy.name)}">
+          <div class="web-category-spec">
+            <span>Featured sample</span>
+            <strong>${escapeHtml(leadItem.title || copy.name)}</strong>
+            <small>W ${Math.round(leadDimensions.x)} / D ${Math.round(leadDimensions.z)} / H ${Math.round(leadDimensions.y)} cm</small>
+          </div>
+        </div>
+      </section>
+
+      <nav class="web-category-switcher" aria-label="切换行业页面">${switcher}</nav>
+
+      <section class="web-category-business" aria-label="${escapeHtml(copy.name)}商业价值">
+        <article>
+          <span>Problem</span>
+          <h2>${escapeHtml(copy.problem)}</h2>
+        </article>
+        <article>
+          <span>Outcome</span>
+          <h2>${escapeHtml(copy.outcome)}</h2>
+        </article>
+        <article>
+          <span>Library</span>
+          <h2>${escapeHtml(copy.metric)}，可按品牌和销售场景继续扩展。</h2>
+        </article>
+      </section>
+
+      <section class="web-category-insights" aria-label="${escapeHtml(copy.name)}展示能力">
+        ${insightCards}
+      </section>
+
+      <section class="web-case-section" id="webCategorySamples" aria-labelledby="webCategorySamplesTitle">
+        <div class="web-case-section-head">
+          <span>Samples</span>
+          <h2 id="webCategorySamplesTitle">${escapeHtml(copy.name)}案例样板</h2>
+          <p>保留原来的产品样板逻辑，用产品自己说话；页面结构负责把它包装成商业案例。</p>
+        </div>
+        <div class="web-case-sample-grid">${itemCards}</div>
+      </section>
+
+      <section class="web-category-cta">
+        <span>Ready for your category?</span>
+        <h2>把这个行业页面替换成你的真实产品，就能成为一套可交付的 3D 案例库。</h2>
+        <a href="./miniapp?category=${escapeHtml(category.id)}&lang=zh">查看移动端案例页</a>
+      </section>
+    </main>
+  `;
+}
+
+function initWebCaseLibrary() {
+  state.lang = supportedLanguages.has(requestedLanguage) ? requestedLanguage : "zh";
+
+  if (searchParams.has("category")) {
+    renderWebCategoryPage(activeCaseCategory);
+    return;
+  }
+
+  renderWebHomePage();
+}
+
 function init() {
   applyCaseTheme();
+
+  if (!isMiniAppMode) {
+    initWebCaseLibrary();
+    return;
+  }
 
   if (!furniture.length) {
     document.body.innerHTML = "<main class='empty-state'>No showroom furniture data found.</main>";
